@@ -64,16 +64,16 @@
  * `-m` #cuenta cantidad de letras
 
 ## Shortcuts
-<kbd>CTRL</kbd> + <kbd>L</kbd> = Limpia pantalla.
-<kbd>CTRL</kbd> + <kbd>R</kbd> = Busca un comando ejecutado.
+ * <kbd>CTRL</kbd> + <kbd>L</kbd> = Limpia pantalla.
+ * <kbd>CTRL</kbd> + <kbd>R</kbd> = Busca un comando ejecutado.
 ## Streams
-Hay dos salidas, estándar output y standard error
-`2>&1` #<b>STD_ERROR</b> se envía al pointer de 1
-`;` #concateno procesos.
 ### Standard Input
 Es lo que enviamos a un programa y se puede enviar por la terminal con el signo menor que `<`
 ### Standard Output
 Las respuestas del input sin errores con la cual se puede concatenar o recibir por medio de un uno `1` y el símbolo mayor que `<comando/programa>  1> <nombre archivo>` con el cual creamos un archivo y ingresamos el <b>STD_OUT</b>, El número uno está de más ponerlo ya que por default envía solamente el <b>STD_OUT</b> y si en vez de introducir un signo mayor que `>` ponemos 2 `<comando/programa> 1>> <nombre archivo>` concatena al archivo mencionado.
 ### Standard Error
-En este caso es similar al <b>STD_OUT</b> con diferencia que en este es necesario llamarlo con el número `2` `<comando/programa> 2> <nombre archivo>` y `<comando/programa> 2>> <nombre archivo>`
+En este caso es similar al <b>STD_OUT</b> con diferencia que en este es necesario llamarlo con el número `2` `<comando/programa> 2> <nombre archivo>` y `<comando/programa> 2>> <nombre archivo>`.
+### Extra
+ * `2>&1` #<b>STD_ERROR</b> se envía al pointer de 1.
+ * `;` #concateno procesos.
 
