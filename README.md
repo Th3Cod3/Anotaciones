@@ -52,7 +52,8 @@
 `top` #muestra los procesos
 `kill [option] <PID>` #mata el proceso con el PID enviado.
 `grep [option] <pattern> [file]` #Busca patrones dentro de los archivos, si invoca atrás de un pipe | lo busca en el resultado del comando que viene su tras.
-### Ejemplo: grep -r . -e .php #este comando me devuelve todos las líneas que contienen .php desde la carpeta raíz hacia abajo.
+### Ejemplo: 
+`grep -r . -e .php` #este comando me devuelve todos las líneas que contienen .php desde la carpeta raíz hacia abajo.
  * `-r` #recursivamente.
  * `-e` #patrón den regexp.
  * `-n` #numero de la línea que encontró el patrón
