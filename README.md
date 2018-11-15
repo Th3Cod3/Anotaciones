@@ -53,7 +53,7 @@
  * `-f` #muestra las últimas líneas y actualiza cada vez que haya un cambio.
 
 `more [file]` #imprime en pantalla el contenido del archivo, con paginación.
-### Banderas|Flag
+### Teclas
  * <kbd>space</kbd> #siguiente página.
  * <kbd>enter</kbd> #siguiente línea.
  * <kbd>b</kbd> #retrocede una página.
