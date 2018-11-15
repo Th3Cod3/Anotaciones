@@ -12,32 +12,32 @@
 `cd [directorio]` #te lleva al directorio.
 
 ## Extra
- * `~` #directorio home
- * `/` #directorio root
- * `..` #directorio padre
- * `.` #directorio actual
- * `\` #caracteres especiales (ej. `cd "mis fotos"` sino `cd mis\ fotos`)
+ * `~` #directorio home.
+ * `/` #directorio root.
+ * `..` #directorio padre.
+ * `.` #directorio actual.
+ * `\` #caracteres especiales (ej. `cd "mis fotos"` sino `cd mis\ fotos`).
 `ls [options] [file|dir]` #muestra una lista de archivos/carpetas que hay en el directorio. 
 ### Banderas|Flag
- * `-a` #muestra todos los archivos/carpetas, hasta las escondidas
- * `-d` #lista los directorios
- * `-l` #muestra los permisos
- * `-lh` #legible por humanos (cambia el peso en potencias MB, GB, etc)
- * `-R` #lista recursivamente (muestra los subdirectorios)
- * `-X` #hace un sort por extensión
- * `-t` #hace un sort por tiempo
- * `-S` #hace un sort por peso
-`mkdir <nombre del directorio>` #crea una carpeta.
-`touch <nombre archivo>` #crea un archivo vacío o si existe cambia la fecha de edición.
-`mv <archivo> <destino/[nombre a guardar]>` #mueve o renombra un archivo
-`rm [option] <archivo>` #elimina un archivo o carpeta.
+ * `-a` #muestra todos los archivos/carpetas, hasta las escondidas.
+ * `-d` #lista los directorios.
+ * `-l` #muestra los permisos.
+ * `-lh` #legible por humanos (cambia el peso en potencias MB, GB, etc).
+ * `-R` #lista recursivamente (muestra los subdirectorios).
+ * `-X` #hace un sort por extensión.
+ * `-t` #hace un sort por tiempo.
+ * `-S` #hace un sort por peso.
+`mkdir <nombre del directorio>` #crea una carpeta.\
+`touch <nombre archivo>` #crea un archivo vacío o si existe cambia la fecha de edición.\
+`mv <archivo> <destino/[nombre a guardar]>` #mueve o renombra un archivo.\
+`rm [option] <archivo>` #elimina un archivo o carpeta.\
 ### Banderas|Flag
- * `-r` | `-R` #elimina recursivamente (elimina los subdirectorios y su contenido)
+ * `-r` | `-R` #elimina recursivamente (elimina los subdirectorios y su contenido).
  * `-f` #elimina forzoso sin preguntar si está seguro.
- * `-i` #pregunta antes de eliminar cualquier cosa
-`cp <archivo> <destino/[nombre a guardar]>` #copia el archivo en el destino deseado
-`pushd` #agrega un directorio a la pila 
-`popd` #vuelve al directorio de la pila
+ * `-i` #pregunta antes de eliminar cualquier cosa.
+`cp <archivo> <destino/[nombre a guardar]>` #copia el archivo en el destino deseado.\
+`pushd` #agrega un directorio a la pila.\
+`popd` #vuelve al directorio de la pila.\
 `tail [option] [file]` #muestra las últimas líneas de un archivo.
  * `-<numero>` #muestra la cantidad de líneas deseadas.
  * `-f` #muestra las últimas líneas y actualiza cada vez que haya un cambio.
@@ -56,7 +56,8 @@
 `grep -r . -e .php` #este comando me devuelve todos las líneas que contienen .php desde la carpeta raíz hacia abajo.
  * `-r` #recursivamente.
  * `-e` #patrón den regexp.
- * `-n` #numero de la línea que encontró el patrón
+ * `-n` #numero de la línea que encontró el patrón.
+<br>
 `wc [option] [file]` #cuenta cantidad de líneas, palabras, espacios entre otros.
  * `-l` #cuenta cantidad de líneas.
  * `-w` #cuenta cantidad de palabras
@@ -64,8 +65,8 @@
  * `-m` #cuenta cantidad de letras
 
 ## Shortcuts
-<kbd>CTRL</kbd> + <kbd>L</kbd> = Limpia pantalla.
-<kbd>CTRL</kbd> + <kbd>R</kbd> = Busca un comando ejecutado.
+ * <kbd>CTRL</kbd> + <kbd>L</kbd> = Limpia pantalla.
+ * <kbd>CTRL</kbd> + <kbd>R</kbd> = Busca un comando ejecutado.
 ## Streams
 Hay dos salidas, estándar output y standard error
 `2>&1` #<b>STD_ERROR</b> se envía al pointer de 1
