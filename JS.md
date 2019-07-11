@@ -303,6 +303,160 @@ Esto es equivalente a el método `prototype`, todos los objetos tienes este mét
 
 En el ejemplo de arriba muestro otra forma de declarar objetos para JS y también tenemos las clases de JS que en si no son clases sino objetos, pero con la ayuda de la versión ECMAScript 2015 se cambia la sintaxis. 
 
+# Asincronismo
+console.log(arguments)
+##Funciones como parámetro
+JS tiene una característica que se puede pone funciones como parámetros de una función, pero estos deben de ser pasados como referencia sin los paréntesis.
+~~~javascript
+const sumar = (numero, numero2, callback) => {
+	if(callback)
+		callback(numero, numero2)
+
+	return numero + numero2 
+}
+const sumarText = (numero1, numero2) => {
+	console.log(`La suma de ${numero1} mas ${numero2} es ${numero1+numero2}`)
+}
+
+sumar(10, 15)
+// 25
+
+sumar(8, 10, sumarText) // La función se enviá como referencia (Sin paréntesis)
+// [console]: La suma de 8 mas 10 es 18
+// 25
+~~~
+
+## Callback
+Los callback son funciones que se mandan como parámetros en una función que debe ser ejecutados en un futuro o no dependiendo de la función, veamoslo en un ejemplo. El **callback** se puede mandar por referencia o declararse en el mismo parámetro.
+
+### Event loop (Cola de tareas)
+En JS no existe el **asincronismo** como tal ya que solo trabaja en un solo núcleo, pero puede enviar solicitudes al Web api. El se encarga de completar la petición y después lo enviá al evento **event loop** donde se van encolando las respuestas que JS al no tener nada mas que hacer se encarga de ejecutarlas en el orden en el cual se an completado.
+
+**Ejemplo 1**
+*Event loop*
+~~~javascript
+console.log(a)
+setTimeout(() => console.log(b),0)
+console.log(c)
+/*
+*	resultado
+* a, c, b
+*	En este ejemplo podemos observar como el callback se manda al event loop. 
+*	Después de terminar todas las ejecuciones seguirá con la cola del event loop
+*/
+~~~
+Veremos otro ejemplo con una solicitud ajax con jQuery, donde requiere un **callback** y veremos com ver todos los argumentos que se envían en una función.
+
+**Ejemplo 2**
+*Un callback*
+~~~javascript
+// JQuery
+// url = string, option = object, callback = function;
+// $.get(url,[option],[callback])
+let url = 'http://swapi.co/api/people/1'
+let options = { crossDomain: true } 
+// esta opción se usa cuando se va hacer consultas a otras pagina.
+$.get(url, option, luke => { // el callback ha sido declarado en la misma función "Anónimo sin nombre"
+	console.log(arguments) // (data, textStatus, jqXHR)
+	// arguments es una palabra reservada para ver todos los argumento que llegan a una función.
+	//En este caso la data se guardo en la variable luke
+	console.log(`Hola, yo soy ${luke.name}.`) // Hola yo soy Luke Skywalker.
+})
+~~~
+
+**Ejemplo 3**
+*Multiples callback no garantiza el orden*
+~~~javascript
+const URL_API = 'https://swapi.co/api/'
+const PEOPLE_URL = 'people/:id'
+let options = { crossDomain: true } 
+const onPeopleResponse = person => { console.log(`Hola, yo soy ${person.name}.`) }
+const getPeople = id => {
+	const url = `${URL_API}${PEOPLE_URL.replace(':id', id)}`
+	$.get(url, options, onPeopleResponse) // el callback ha sido pasado como referencia.
+}
+getPeople(1)
+getPeople(2)
+getPeople(3)
+// Hola, yo soy C-3PO.
+// Hola, yo soy Luke Skywalker.
+// Hola, yo soy R2-D2.
+// En este ejemplo no se asegura el orden en el cual se van a mostrar, 
+// ya que el primero que llegue al event loop sera ejecutado.
+~~~
+Esto se puede solucionar con callbacks, veamoslo en un ejemplo
+
+**Ejemplo 4**
+*Encadenamiento de callbacks garantizan el orden, pero crea otros problemas como callbacks hell*
+~~~javascript
+const getPeople = (id, callback) => {
+	const url = `${URL_API}${PEOPLE_URL.replace(':id', id)}`
+	$
+	.get(url, options, (person) =>{
+		onPeopleResponse(person)
+		if(callback)
+			callback()
+	})
+	.fail(() => {console.log('Hubo un error')})
+}
+getPeople(1, () => {
+	getPeople(2, () => {
+		getPeople(3, () => {
+			getPeople(4)
+		})
+	})
+})
+// Lo que se esta haciendo es enviar las peticiones en serie (una por una)
+// Esto trae un caos llamado callbacks hell
+~~~
+
+## Promesas
+Las promesas son algo nuevo, ahora casi todos los exploradores soporta las promesas, pero en dado caso hay que usar un polifield que detecta si el explorador soporta promesas y crea el objeto promesas. Esto para solucionar distintos problemas de encadenamiento de callback como el **callback hell** entre otros.
+**Ejemplo 5**
+*Encadenamiento de Promesas*
+~~~javascript
+const URL_API = 'https://swapi.co/api/'
+const PEOPLE_URL = 'people/:id'
+let options = { crossDomain: true } 
+const onPeopleResponse = person => { console.log(`Hola, yo soy ${person.name}.`) }
+const getPeople = id => new Promise((response, reject) => {
+	const url = `${URL_API}${PEOPLE_URL.replace(':id', id)}`
+	$
+	.get(url, options, (person) => {
+		response(person)
+	})
+	.fail(() => { reject(id) })
+})
+getPeople(1)
+	.then(person => {
+		onPeopleResponse(person)
+		return getPeople(2)
+	})
+	.then(person => {
+		onPeopleResponse(person)
+		return getPeople(3)
+	})
+	.then(person => {
+		onPeopleResponse(person)
+		return getPeople(4)
+	})
+	.then(onPeopleResponse)
+	.catch(id => {console.log(`Hubo un error con el ${id}`)})
+~~~
+Esto nos traer una duda como puedo hacer multiples promesas en un loop esto es posible con un array, veamoslo en un ejemplo.
+**Ejemplo 5**
+*Encadenamiento de Promesas*
+~~~javascript
+const ids = [1,2,3,4,5,6,7,8,9,10]
+const promesas = ids.map(getPeople)
+Promise
+	.all(promesas)
+	.then(persons => {
+		persons.map(onPeopleResponse)
+	})
+	.catch(id => {console.log(`Hubo un error con el ${id}`)})
+~~~
+## Async Await
 ## OBJETO DATE()
 `new Date()` *Crea un objeto con la fecha y hora actual*
 `new Date(YEAR, MONTH, DAY, HOURS, MINUTES, SECONDS, MILLISECONDS)`
