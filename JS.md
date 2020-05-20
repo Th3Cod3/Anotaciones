@@ -303,165 +303,12 @@ Esto es equivalente a el método `prototype`, todos los objetos tienes este mét
 
 En el ejemplo de arriba muestro otra forma de declarar objetos para JS y también tenemos las clases de JS que en si no son clases sino objetos, pero con la ayuda de la versión ECMAScript 2015 se cambia la sintaxis. 
 
-# Asincronismo
-console.log(arguments)
-##Funciones como parámetro
-JS tiene una característica que se puede pone funciones como parámetros de una función, pero estos deben de ser pasados como referencia sin los paréntesis.
-~~~javascript
-const sumar = (numero, numero2, callback) => {
-	if(callback)
-		callback(numero, numero2)
-
-	return numero + numero2 
-}
-const sumarText = (numero1, numero2) => {
-	console.log(`La suma de ${numero1} mas ${numero2} es ${numero1+numero2}`)
-}
-
-sumar(10, 15)
-// 25
-
-sumar(8, 10, sumarText) // La función se enviá como referencia (Sin paréntesis)
-// [console]: La suma de 8 mas 10 es 18
-// 25
-~~~
-
-## Callback
-Los callback son funciones que se mandan como parámetros en una función que debe ser ejecutados en un futuro o no dependiendo de la función, veamoslo en un ejemplo. El **callback** se puede mandar por referencia o declararse en el mismo parámetro.
-
-### Event loop (Cola de tareas)
-En JS no existe el **asincronismo** como tal ya que solo trabaja en un solo núcleo, pero puede enviar solicitudes al Web api. El se encarga de completar la petición y después lo enviá al evento **event loop** donde se van encolando las respuestas que JS al no tener nada mas que hacer se encarga de ejecutarlas en el orden en el cual se an completado.
-
-**Ejemplo 1**
-*Event loop*
-~~~javascript
-console.log(a)
-setTimeout(() => console.log(b),0)
-console.log(c)
-/*
-*	resultado
-* a, c, b
-*	En este ejemplo podemos observar como el callback se manda al event loop. 
-*	Después de terminar todas las ejecuciones seguirá con la cola del event loop
-*/
-~~~
-Veremos otro ejemplo con una solicitud ajax con jQuery, donde requiere un **callback** y veremos com ver todos los argumentos que se envían en una función.
-
-**Ejemplo 2**
-*Un callback*
-~~~javascript
-// JQuery
-// url = string, option = object, callback = function;
-// $.get(url,[option],[callback])
-let url = 'http://swapi.co/api/people/1'
-let options = { crossDomain: true } 
-// esta opción se usa cuando se va hacer consultas a otras pagina.
-$.get(url, option, luke => { // el callback ha sido declarado en la misma función "Anónimo sin nombre"
-	console.log(arguments) // (data, textStatus, jqXHR)
-	// arguments es una palabra reservada para ver todos los argumento que llegan a una función.
-	//En este caso la data se guardo en la variable luke
-	console.log(`Hola, yo soy ${luke.name}.`) // Hola yo soy Luke Skywalker.
-})
-~~~
-
-**Ejemplo 3**
-*Multiples callback no garantiza el orden*
-~~~javascript
-const URL_API = 'https://swapi.co/api/'
-const PEOPLE_URL = 'people/:id'
-let options = { crossDomain: true } 
-const onPeopleResponse = person => { console.log(`Hola, yo soy ${person.name}.`) }
-const getPeople = id => {
-	const url = `${URL_API}${PEOPLE_URL.replace(':id', id)}`
-	$.get(url, options, onPeopleResponse) // el callback ha sido pasado como referencia.
-}
-getPeople(1)
-getPeople(2)
-getPeople(3)
-// Hola, yo soy C-3PO.
-// Hola, yo soy Luke Skywalker.
-// Hola, yo soy R2-D2.
-// En este ejemplo no se asegura el orden en el cual se van a mostrar, 
-// ya que el primero que llegue al event loop sera ejecutado.
-~~~
-Esto se puede solucionar con callbacks, veamoslo en un ejemplo
-
-**Ejemplo 4**
-*Encadenamiento de callbacks garantizan el orden, pero crea otros problemas como callbacks hell*
-~~~javascript
-const getPeople = (id, callback) => {
-	const url = `${URL_API}${PEOPLE_URL.replace(':id', id)}`
-	$
-	.get(url, options, (person) =>{
-		onPeopleResponse(person)
-		if(callback)
-			callback()
-	})
-	.fail(() => {console.log('Hubo un error')})
-}
-getPeople(1, () => {
-	getPeople(2, () => {
-		getPeople(3, () => {
-			getPeople(4)
-		})
-	})
-})
-// Lo que se esta haciendo es enviar las peticiones en serie (una por una)
-// Esto trae un caos llamado callbacks hell
-~~~
-
-## Promesas
-Las promesas son algo nuevo, ahora casi todos los exploradores soporta las promesas, pero en dado caso hay que usar un polifield que detecta si el explorador soporta promesas y crea el objeto promesas. Esto para solucionar distintos problemas de encadenamiento de callback como el **callback hell** entre otros.
-**Ejemplo 5**
-*Encadenamiento de Promesas*
-~~~javascript
-const URL_API = 'https://swapi.co/api/'
-const PEOPLE_URL = 'people/:id'
-let options = { crossDomain: true } 
-const onPeopleResponse = person => { console.log(`Hola, yo soy ${person.name}.`) }
-const getPeople = id => new Promise((response, reject) => {
-	const url = `${URL_API}${PEOPLE_URL.replace(':id', id)}`
-	$
-	.get(url, options, (person) => {
-		response(person)
-	})
-	.fail(() => { reject(id) })
-})
-getPeople(1)
-	.then(person => {
-		onPeopleResponse(person)
-		return getPeople(2)
-	})
-	.then(person => {
-		onPeopleResponse(person)
-		return getPeople(3)
-	})
-	.then(person => {
-		onPeopleResponse(person)
-		return getPeople(4)
-	})
-	.then(onPeopleResponse)
-	.catch(id => {console.log(`Hubo un error con el ${id}`)})
-~~~
-Esto nos traer una duda como puedo hacer multiples promesas en un loop esto es posible con un array, veamoslo en un ejemplo.
-**Ejemplo 5**
-*Encadenamiento de Promesas*
-~~~javascript
-const ids = [1,2,3,4,5,6,7,8,9,10]
-const promesas = ids.map(getPeople)
-Promise
-	.all(promesas)
-	.then(persons => {
-		persons.map(onPeopleResponse)
-	})
-	.catch(id => {console.log(`Hubo un error con el ${id}`)})
-~~~
-## Async Await
 ## OBJETO DATE()
 `new Date()` *Crea un objeto con la fecha y hora actual*
 `new Date(YEAR, MONTH, DAY, HOURS, MINUTES, SECONDS, MILLISECONDS)`
 `new Date(MILLISECONDS)`
 `new Date(DATE STRING)`
+
 # MÉTODOS NATIVOS JS
 ## STRING
 |Método|Descripción|extra|
@@ -505,3 +352,558 @@ console.log(personas) // devuelve todas las personas en un array
 |Propiedades|Descripción|
 |-----------|:----------|
 |length|Devuelve el número de caracteres de un string|
+
+# JS PROFESIONAL
+## Como llega un script al navegador
+Por defecto el navegador detiene la ejecución de la la lectura del `DOM` cuando encuentra una etiqueta `script`, descarga tal `script` y lo ejecuta después sigue con la lectura del `script`. la etiqueta `script` tienes dos atributos que son `async` y `defer`.
+* `<script async src="..."></script>` de esta forma el archivo es llamado pero la ejecución del DOM no es detenida durante la descarga y se detiene cuando ya se ha descargado para ejecutar el código.
+* `<script defer src="..."></script>` de esta forma el archivo es descargado pero no es hasta que la lectura de el DOM termina se ejecuta.
+
+## Module
+Este es un scope nuevo, que solo es soportado por exploradores modernos. Para incluir un archivo con module usamos `<script type="module"></script>` teniendo en cuenta que los modules debe cumplir con una estructura de `export` e `import`.
+
+## Closure
+Son funciones que retornan funciones y estas funciones pueden tener valores predefinidos donde no podemos modificar ya sea por que era variables que esta en la función padre o pasadas como parámetro.
+
+~~~javascript
+function makeCounter(n) {
+  let count = n
+  return {
+    increase: function() {
+      return ++count
+    },
+    decrease: function() {
+      return --count
+    },
+    getCount: function() {
+      return count;
+    },
+  }
+}
+
+let counter = makeCounter(10);
+counter.decrease();
+counter.increase();
+counter.count = 2; // esto da un error ya que esa variable no es accesible desde afuero solo puede ser manipulada con los funciones pre definidas increase, decrease, getCount;
+~~~
+
+## this
+El JS hay unos momentos donde `this` puede ser otra referencia que no es el objeto en si.
+
+~~~javascript
+// this en el scope global
+// `this` es window el objeto principal de un navegador, aunque dentro de node es module.
+console.log(`this: ${this}`);
+
+// this en el scope de una función
+// this también hace referencia a el objeto window a menos que estemos usado JS en modo estricto seria undefined.
+function whoIsThis() {
+  returnthis;
+}
+console.log(`whoIsThis(): ${whoIsThis()}`);
+// this en el scope de una función en strict mode
+'use strict';
+function whoIsThisStrict() {
+  'use strict';
+  returnthis;
+}
+console.log(`whoIsThisStrict(): ${whoIsThisStrict()}`);
+
+// this en el contexto de un objeto
+// this hace referencia a si mismo hasta dentro de una función.
+const person = {
+  name: 'Frank',
+  saludar: function () {
+    console.log(`Hola soy ${this.name}`);
+  }
+}
+
+console.log(`person.saludar: ${person.saludar()}`)
+
+// this cuando sacamos a una función de un objeto
+// this hace referencia a el objeto windows/module.
+const accion = person.saludar;
+accion();
+
+// this en el contexto de una "clase"
+function Person (name) {
+  //this comienza siendo {}
+  this.name = name;
+}
+
+Person.prototype.saludar = function() {
+  console.log(`Me llamo: ${this.name}`);
+}
+
+const juanda = new Person('Juanda');
+juanda.saludar();
+~~~
+
+## Cambiar contexto de this (call, apply, bind)
+call, apply, bind son funciones que viene en el prototype de todas las funciones.
+
+~~~javascript
+ // Establece `this` usando `call`
+  //aqui establecimos el valor de this para la funcion saludar
+  functionsaludar () {
+    console.log(`Hola soy ${this.name}${this.apellido}`)
+  }
+
+  const fran = {
+    name: 'Francisco',
+    apellido: 'Garcia'
+  }
+
+  saludar.call(fran)
+
+  // Establece `this` usando `call` y pasar argumentos a la función
+  functioncaminar (metros, direccion) {
+    console.log(`${this.name} camina ${metros} metros hacia ${direccion}`)
+  }
+
+  caminar.call(fran, 400, 'norte');
+
+  // Establece `this` usando `apply` y pasar argumentos a la función
+  //recibe los parametros como un arreglo (array)
+  const valores = [1500, 'el noreste'];
+  caminar.apply(fran, [800, 'al sur']);
+  caminar.apply(fran, valores);
+
+  //diferencia entre call y apply
+  //call los argumentos se pasan separados por coma
+  //Apply los argumentos se pasan en un Array
+
+  // Establecer `this` en una nueva función usando `bind`
+  //se usa para hacer funciones reutilizables
+  const juanda = {
+    name: 'Juan David',
+    apellido: 'Garcia'
+  }
+
+  const juandaSaluda = saludar.bind(juanda);
+  juandaSaluda();
+
+  const juandaCamina = caminar.bind(juanda);
+  juandaCamina(3576, 'al sur oriente');
+
+  const juandaCamina2 = caminar.bind(juanda, 1234, 'al oriente');
+  juandaCamina2();
+
+  //de esta forma guardamos parcialmente los argumentos y luego llenamos los demas
+
+  const juandaCamina3 = caminar.bind(juanda, 5566);
+  juandaCamina3('el infinito y mas alla');
+
+  // Cuándo es útil usar uno de estos métodos
+  // call y apply asignan el valor de this y se va a ejecutar inmediatamente
+  // bind crea una nueva funcion,
+  
+  //const buttons = document.getElementsByClassName('call-to-action');
+  const buttons = document.getElementsByClassName('call-to-action');
+  // buttons.forEach(button => {
+  //   button.onClick = () => alert('Nunca pares de aprender!!!')
+  // });
+
+  // Array.prototype.forEach.call(buttons, button => {
+  //   button.onClick = () => alert('Nunca para de apreder!!!!!')
+  // });
+
+  Array.prototype.forEach.call(buttons, button => {
+    button.onclick = () => alert('Nunca pares de aprender!!!!!!');
+  });
+
+  //Da error por que buttons, es un NodeList y no una funcion
+~~~
+
+## Prototype
+En JS todo son objetos, vamos a ir creando ejemplos hasta llegar al uso de prototype.
+
+~~~javascript
+// esta es la forma mas simple de crear un objeto con una función, pero cada vez que necesitemos uno nuevo lo tenemos que hard codear
+const newObj = {
+  name: "Yefri"
+}
+
+newObj.saludar = function() {
+  console.log(`Hola soy ${this.name}`);
+}
+
+newObj.saludar(); // Console: Hola soy Yefri
+~~~
+~~~javascript
+// ahora lo vamos hacer dentro de una función para que sea como constructor donde se va retornar un objeto.
+function Person(name) {
+  const person = {
+    name: name
+  }
+
+  newObj.saludar = function() {
+    console.log(`Hola soy ${this.name}`);
+  }
+  return person;
+}
+
+// pero esto no es muy eficiente por que cada vez creamos un nuevo objeto va crear la función saludar en memoria.
+const newObj = Person("Yefri");
+newObj.saludar(); // Console: Hola soy Yefri
+~~~
+~~~javascript
+// para evitar eso podíamos aver hecho una variable global para pasarlo como referencia.
+const personMethods = {
+  saludar: function() {
+    console.log(`Hola soy ${this.name}`);
+  }
+}
+
+function Person(name) {
+  const person = {
+    name: name
+  }
+
+  newObj.saludar = personMethods.saludar;
+  return person;
+}
+
+const newObj = Person("Yefri");
+newObj.saludar(); // Console: Hola soy Yefri
+~~~
+~~~javascript
+// Aunque es muy tedioso si tenemos en cuenta que vamos a tener muchos métodos, pero existe una manera con la cual podemos evitarnos eso y es con Object.create(), esto lo que logra es enviar todos los métodos al prototype
+const personMethods = {
+  saludar: function() {
+    console.log(`Hola soy ${this.name}`);
+  }
+}
+
+function Person(name) {
+  const person = Object.create(personMethods);
+  hero.name: name;
+
+  return person;
+}
+
+const newObj = Person("Yefri");
+newObj.saludar(); // Console: Hola soy Yefri
+~~~
+~~~javascript
+// Bueno mejoremos esto con prototype, ya que es la forma por defecto cuando usamos la palabra reservada new.
+function Person(name) {
+  const person = Object.create(Person.prototype); // esto cuando usamos la palabra new a la hora de crear el objeto, esto se hace automático. la diferencia estan en que esto se le asigna a this.
+  person.name: name;
+
+  return person; // automático con la palabra new
+}
+
+Person.prototype.saludar = function() {
+  console.log(`Hola soy ${this.name}`);
+}
+
+const newObj = Person("Yefri");
+newObj.saludar(); // Console: Hola soy Yefri
+~~~
+~~~javascript
+// Veamos el ejemplo con la palabra new, lo que esta comentado dentro de la función pasa implícitamente
+function Person(name) {
+  // this = Object.create(Person.prototype);
+  this.name: name; // aca usamos this ya que es lo que se retorna.
+
+  // return this;
+}
+
+Person.prototype.saludar = function() {
+  console.log(`Hola soy ${this.name}`);
+}
+
+const newObj = new Person("Yefri");
+// Como puedes ver la palabra new es mas tanto para facilitar la escritura, pero es algo que ya se podia hacer.
+newObj.saludar(); // Console: Hola soy Yefri
+~~~
+
+Es bueno tener en cuenta que actualmente en JS existe el la palabra `class`, pero al igual que new es solo facilitacion de escritura, pero son cosas que ya se podian hacer sin.
+
+## Como funciona el motor de JS
+![Que hace un JS Engine](./img/JS/Parsers&AST.PNG)
+
+### Que hace un parse
+Este agarra tu código y lo lee, pero lo que tu escribes no es lo que la computadora entiende, primero lo tiene que descomponer, lo que hace es identificar las palabras claves a estos pedazos de les llama tokens, cuando el parse no puede reconocer una estructura ella envia un `Syntax Error`
+
+### AST
+Que es el AST (Abstract Syntax Tree) es una estructura de grafos que representa un programa. A base de los tokens se crea el AST. Con esta estructura es que se encarga JS Engine de comprender el codigo y enviarlo a bytecode. En eset link https://astexplorer.net/ podemos analizar el AST del código
+
+### Bytecode
+El bytecode es como un assembler, es un código que se puede escribir pero de muy bajo nivel. Después de obtener el byte este se procesa por el compilador y es optimizado para su ejecución.
+
+### Eventloop
+El eventloop trabaja en conjunto con diferentes mecanimos.
+* Stack
+* Heap
+* Schedule Tasks (Web API)
+* tasks Queue
+* Micro-tasks Queue
+#### Stack
+El primero que vamos hablar del es el `stack`, esto es una `pila de orden procesos` que se van apilando a base como se vallan llamando. 
+a la action de agregar algo a la pila se le llama push y sacar algo de la pila se le llama pop.
+
+#### Memory HEAP
+Es un espacio en memoria mucho mas grande donde los datos no tienen un orden. Aca es donde se guarda toda la información de las variables, funciones, scope, etc.
+
+#### Schedule Tasks
+Son tareas que se le dan para procesar/ejecutar en asíncrono. Normalmente es el browser se encarga de ejecutar.
+
+#### Task Queue
+Despues que las `Schedule Tasks` termina con una tarea la enfila dentro del `Task Queue` para cuando el `Stack` este vacio/disponible. `Eventloop` es el encargado de ver si el `stack` esta vació y enviarlo a ejecutar.
+
+#### Micro-Tasks Queue
+Es otra fila que tiene mas prioridad que `Task Queue` las promesas siempre van a esta fila por lo tanto tiene mas prioridad.
+
+## Getters and Setters
+Son palabras reservada para hacer un método un parámetro. Veamoslo en un ejemplo.
+
+~~~javascript
+const person = {
+  nombre: "yefri",
+  apellido: "gonzalez",
+  get nombreCompleto() { // este nombre de metodo va ser usado como parametro cuando se llama algo se ejecuta
+    return `${this.nombre} ${this.apellido}`;
+  },
+  set nombreCompleto(value) { // este nombre de metodo va ser usado como parametro cuando se asigna algo se ejecuta
+    const parts = value.split(" ");
+    this.nombre = parts[0];
+    this.apellido = parts[1];
+  }
+}
+
+person.nombreCompleto = "Yefri Gonzalez" // se ejecuta el setter y como parámetro va lo asignado.
+console.log(person.nombreCompleto) // se ejecuta el getter
+~~~
+
+## Proxies
+Son interceptores de un objeto donde puedes poner diferentes trampas para asi hacer un cambio/sniff o lo que te imagines cuando se hace un llamado a un parámetro o método.
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
+
+https://github.com/shama/letswritecode
+~~~javascript
+const person = {
+  first: 'Bear',
+  last: 'McBearison'
+}
+
+const cleverPerson = new Proxy(person, {
+  get: function (target, prop) {
+    if (!(prop in target)) {
+      return prop.split('_').map(function (part) {
+        return target[part]
+      }).join(' ')
+    }
+    return target[prop]
+  }
+})
+
+console.log(cleverPerson.last_first_first_first_first_first)
+
+cleverPerson.last = 'Beary'
+console.log(cleverPerson.first_last)
+~~~
+
+## Generators
+Son funciones que se les da un paro que después se puede continuar en cualquier momento veamos un ejemplo;
+
+~~~javascript
+function* idMaker() {
+  var index = 0;
+  while(true){
+    yield index++; // la ejecución se suspende liberando el hilo de ejecución y regresara en el momento de darle la instrucción de seguir.
+  }
+}
+
+var gen = idMaker(); // "Generator { }"
+
+console.log(gen.next().value); // 0
+console.log(gen.next().value); // 1
+console.log(gen.next().value); // 2
+~~~
+
+## Rechazar un ajax con fetch
+Fetch tiene la siguiente sintaxis `fetch(consult: string, [init: object])` donde dentro de init puedes configurar diferentes cosas como los `headers`, `body`, entre otros, ahi también esta la opción `signal` que se maneja con la clase `AbortController`. veamoslo en código.
+
+~~~javascript
+let controller = new AbortController();
+fetch(url, {
+  signal: controller.signal
+})
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch()
+
+setTimeout(() => {
+  controller.abort()
+}, 2000)
+~~~
+
+## IntersectionObserver
+Es una clase que mantiene el monitoreo de un elemento y saver cuando es interceptado por la pantalla de browser. La sintaxis de la clases es la siguiente `InterceptionObserver(handler, [config])`.
+https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver
+
+~~~javascript
+let el = document.querySelector("#container");
+let observer = new IntersectionObserver(observerCallback, {
+  threshold: 0.2
+});
+observer.observe(el)
+const observerCallback = (entry) => {
+  entry.intersectionRatio // porcentaje del  lo que es visible del elemento que se observa
+}
+~~~
+
+## VisibleChange
+Este evento es para saber cuando esta el usuarios dentro de nuestro tab.
+
+~~~javascript
+document.addEventListener('visibilitychange', () => {
+  document.visibilityState // estado es 'visible' o 'hidden'
+})
+~~~
+
+## Services Workers
+Son una capa que guarda peticiones en cache.
+
+**index.js**
+~~~javascript
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(error => {
+    console.log(error);
+  })
+}
+~~~
+
+**sw.js**
+~~~javascript
+const VERSION = "v1";
+
+self.addEventListener('install', event => {
+  event.waitUntil(precache());
+});
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  // get
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  // buscar en cache
+  event.respondWith(cachedResponse(request));
+
+  //Update the cache
+
+  event.waitUntil(updateCache(request));
+
+})
+
+async function precache() {
+  const cache = await caches.open(VERSION);
+  return cache.addAll([
+    '/',
+    '/index.html',
+    '/assets/index.js'
+  ]);
+}
+
+async function cachedResponse( request ) {
+  const cache = await caches.open(VERSION);
+  const response = await cache.match(request);
+  return response || fetch(request) ;
+}
+
+async function updateCache( request ) {
+  const cache = await caches.open(VERSION);
+  const responce = await fetch ( request );
+  return cache.put(request, responce);
+}
+~~~
+
+
+## TypeScript
+TypeScript le da la habilidad a javascript de ser fuertemente tipado. eso significa que las variables no pueden cambiar de tipo.
+### Types
+~~~typescript
+// Boolean
+let muted: boolean;
+muted = false;
+muted = "true"; // aca va a dar un error, ya que no cumple con el tipo
+
+// Number
+let age = '6';
+let numerador: number = 42;
+let age = 6; // dara error ya que age es un string
+let denominador: number = age: // Aca saltara un error, ya que age es un string
+let decimal: number = 6;
+let hex: number = 0xf00d;
+let binary: number = 0b1010;
+let octal: number = 0o744;
+
+// String
+let fullName: string = `Bob Bobbington`;
+let age: number = 37;
+let sentence: string = `Hello, my name is ${ fullName }.
+I'll be ${ age + 1 } years old next month.`;
+
+// Array
+let list: number[] = [1, 2, 3];
+let list: Array<number | string> = [1, 2, '3rd'];
+
+// Declare a tuple type
+let x: [string, number];
+// Initialize it
+x = ["hello", 10]; // OK
+// Initialize it incorrectly
+x = [10, "hello"]; // Error
+
+enum Color {Red, Green, Blue}
+enum Color2 {Red = "Red", Green = "Green", Blue = "Blue"}
+let c: Color = Color.Green; // esto retorna un numero 1, por que es el index del color.
+let c: Color2 = Color2.Green; // esto retorna un string con el nombre del color
+
+// Any
+let notSure: any = 4;
+notSure = "maybe a string instead";
+notSure = false; // okay, definitely a boolean
+
+// Object
+let obj = {};
+let obj2: object; 
+~~~
+### Funciones
+~~~typescript
+// funcion
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+const sum = add(4, 6);
+const sum = add(4, "6"); // Error need to be a string
+
+// closure
+functio createAdder(a: number): (number) => number {
+  return function(b: number) {
+    return b +a;
+  }
+}
+
+const addFour = createAdder(4);
+const fourPlus6 = addFour(6);
+
+// valores opcionales/predefinidos
+//en este caso lastName es opcional
+function fullName(fisrtName: string, lastName?: string): string { 
+  return `${firstName} ${lastName}`;
+}
+//en este caso lastName es opcional
+function fullName(fisrtName: string, lastName: string = "Pedro"): string { 
+  return `${firstName} ${lastName}`;
+}
+~~~
+
+### Interfaces

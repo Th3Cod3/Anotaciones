@@ -248,5 +248,196 @@ Despues de haber entrado al disco podremos craer particiones y confiugurar el ty
 
 ### Formatear una partición
 El sistema de archivos es la forma en la que se va guardar los datos. No hay un sistema archivo mejor cada uno tiene su beneficios y deficiencias.
+#### Sistemas de archivos
+* File systems vinculados con MS-DOS/Windows
+  * **FAT** *"File Allocate Table"* Este sistema es de 16 bits y soporta volumenes/particiones de máximo 4GB, es el mas eficiente y rapido para particiones de menos de 200MB. El tamaño del sector es entre 16KB a 64KB y solo soporta un archivo por sector y acepta archivos de máximo 2GB.
+  * **FAT32** *"File Allocate Table 32"* Este sistema es de 32 bits y soporta volumenes/particiones de máximo 2TB, es mas eficiente entre particiones entre 512MB hasta 32GB. Puede reducir el tamaño de sus sectores hasta 4 KB y acepta archivos de máximo 4GB
+  * **NTFS** *"New Technology File System"* Soporta particiones de hasta 2TB, pero es mas eficiente para particiones de mínimo 512MB hasta 2TB.
+* File systems de Linux
+  * **EXT** *"Extended File System"* 
+  * **EXT2** *"Extended File System 2"* 
+  * **EXT3** *"Extended File System 3"* 
+  * **EXT4** *"Extended File System 4"* 
+  * Son muy similares, las diferencia esta mas tanto en la capacidad del tamaño.
+#### formatear una particion
+**`mkfs.<file_system> <partition>`** con este comando es para formatear la particion deseada ***Nota:*** la particion sera formateada y perderás todos los archivos que tenga en ella.
+***Ejemplo*** `mkfs.ext4 /dev/xvdf1 `
 
-para formartear un particiopn
+#### Montar una particion manual
+Hay que crear la carteta donde va ir montada la particion con el comando: **`mount <partition> <file_location>`**
+***Ejemplo*** `mount /dev/xvdf1 /etc/xvdf1`
+
+`df -h` muestra como están montadas las carpetas y cuanto espacio tienen
+
+Si se desea hacer un cambio en una particion hay que desmontar la particion y es importante que no esten dentro de la particion por que le puede salir que ud esta usando la particion `umount <file_location>`
+
+#### Montar particion automáticamente con /etc/fstab
+https://wiki.archlinux.org/index.php/Fstab_(Espa%C3%B1ol)
+se tiene que editar el archivo `/etc/fstab` con el siguiente orden separado por espacio o tab
+
+~~~Shell
+# <partition>	<file_location>	<type>	<options>	<dump>	<pass>
+/dev/xvdf1	/etc/xvdf1	ext4	default,discard 0	0
+~~~
+
+### Partición SWAP
+La particion swap es una particion de emergencia para cuando la memoria RAM esta llena, porque de emergencia? Por que la swap es muy lenta comparada con cualquier tipo de dispositivo de almacenamiento como SSD. Esto puede causar que tu sistema se relentice.
+#### Como crear una particion SWAP
+hay que crear una particion con id 82 que es Linux Swap y con file system.
+* Entrar al disco `fdisk /dev/xvdf`
+  * Cambiar el id `t` (type)
+  * Seleccionar particion `<numero>`
+  * Seleccionar id *Nota: **L** (list) para ver la lista de id* `<numero>`
+  * Guardar los cambios `w` (write)
+* Formatear el File System `mkswap /dev/xvdf<particion>`
+* Montar la Swap manualmente
+  * Montar la swap manualmente `swapon /dev/xvdf<particion>`
+  * Desmontar la swap `swapoff /dev/xvdf<particion>`
+* Montar la Swap automáticamente
+  * Hay que editar el fstab `vim /etc/fstab`
+~~~Shell
+# <ID>	<type>	<options>	<dump>	<pass>
+UUID=<ID>	swap	sw	0	0
+~~~
+
+### Generar imágenes de disco
+Esto puede ser usado para crear backups de particiones.
+
+Copiamos información en la particion que vamos hacer una imagen del para eso copiamos contenido en la particion.
+* `cp -ra <cp_folder|file> <destino>` Copia toda una carpeta recursivamente y guarda todos los permisos y usuarios.
+  * `-r` Recursivamente
+  * `-a` Todo (Permisos, contraseñas, etc)
+
+con `du -sh` vemos cuanto uso de memoria hace la carpeta actual recursivamente.
+
+Es muy buena practica con la particion desmontada, ya que una particion 
+mantienes escribiendo procesos de cache y va estar trabajando y haciendo cambio.
+
+Para hacer la copia de la particion se usa `dd` este comando hace una copia exacta bit a bit. Es muy importante tener en cuenta que dd crear una copia de la particion completa por lo tanto si la particion tiene 10MB de datos y la particion es de 100MB el va a clonar los 100MB.
+`dd if=<input_file> of="<output_file> bs=<bit_read_size >` 
+**Ejemplo:** `dd if=/dev/xvdf2 of=/disk/xvdf3/backup_xvdf2 bs=1M`
+
+para restaurar es de la misma manera, pero esta vez la particion a la que se va a escribir debe ester desmontada
+**Ejemplo:** `dd of=/dev/xvdf3 if=/disk/xvdf3/backup_xvdf2 bs=1M`
+
+**Escribir un archivo de ceros**
+`dd if=/dev/zero of=zeros100M bs=1M c=100`
+
+**Leer un archivo para medir la velocidad del disco**
+`dd if=zeros100M of=/dev/null`
+
+**Montar una imagen en una USB**
+`mount debian.iso /dev/sdb6 -o loop`
+
+### LVM
+[Que es LVM](https://www.youtube.com/watch?v=R1lMzb0sKMQ)
+LVM *(Logical Volume Manager)* es un sistema de manejo de discos donde puede tener varios discos y agruparlos para que se comporte como un solo volumen.
+para instalarlo.
+`apt-get install lvm2`
+
+Hay que entender que existe pv *(Physical Volume)* y vg *(Volume Group)*
+pv: son las particiones/discos que hacen parte del volumen
+vg: es un grupo de discos a los que se crean como una particion
+
+#### Physical Volume (Union de discos)
+para agrgar una particion/disco al areglo de lvm usamos el comando `pvcreate <particion|disco>` ejemplo `pvcreate /dev/xvdf1`. Si decea eliminar una particion es `pvremove <particion|disco>` ejemplo `pvremove /dev/xvdf` para ver todos los pv montados se usa `pvs` o con `pvdisplay` se ve mucho mas detallado.
+
+#### Volume Group (Discos|volumenes)
+*	Ahora creamos grupos a lvm usamos `vgcreate <nombre> <particion>` ejemplo `vgcreate databases /dev/xvdf1` es bueno practica poner nombre distintivos 
+*	Si quieres agregar mas disco a ese grupo se hace con `vgextend <nombre> <particion>` ejemplo `vgextend databases /dev/xvdf2`. 
+* Para quitar una particion|disco se usa `vgreduce <particon|disco>` 
+*	para ver los grupos `vgs` o con `vgdisplay` se ve mucho mas detallado.
+
+#### Logic Volume (Particiones)
+*	Creamos el volumen de la siguiente manera `lvcreate -n <name> -L <length> <volume_group>` ejemplo `lvcreate -n postgres -L 10g databases`. 
+*	Esto ya se comportara como una particion a la cual se tiene que formatear y montar después de ser creada. 
+*	Si desea agregar mas espacio a una particion `lvextend -L+<length> <logical_volumen>` ejemplo `lvextend -L+10G /dev/databases/postgres` **NOTA:** Hay que modificar el file system, ext4 permite extender en caliente. Se hace de la siguiente manera `resize2fs <particion>`.
+* Para acceder a esa particion es `/dev/databases/postgres` 
+* Para ver los volumenes `lvs` o con `lvdisplay` se ve mucho mas detallado.
+
+### Arranque del sistema
+#### MBR: 
+Es una tecnologia viaja, que coloca 512bitys al inicio de la particion de donde unos esta arancando el sistema. este se encarga de decirle al sistema de guardar los links de donde estan los kernel, controladores, dispositivos, entre otros.
+#### UEFI:
+Salio para tener boots seguros y que esten firmados, por que muchos virus se alojaban ahi para arrancar con ellos. Tambien chequea si todos los componentes esten trabajando como RAM, Controladores de videos, etc.
+
+#### GRUB
+Es un bootloader es el que se encarga de cargar el kernel, driver etc.
+El grub se encunetra en `/etc/grub.d/` y en `/boot/grub/grub.cfg` es el archivo compilado del grub no se debe modificar, si desea hacer un cambio debe ser en `/etc/default/grub` y debes ejecutar `update-grub2` para compilar.
+
+El GRUB se pone en el MBR, en el disco primario. Si deseas hacer una copia del MBR se puede hacer con `dd` de la siguiente manera `dd if=/dev/xvda of=/root/mbr_backup bs=512 count=1`
+
+### Apagar un servidor
+**TIPS:**
+*	Es bueno verificar que servidor es el que va apagar
+*	Tener en cuneta que Linux no pregunta si lo quiere apagar. Solamente apaga!
+
+`shutdown -r now` para reiniciar el servidor ahora
+`shutdown now` para apagar el servidor ahora
+`systemctl reboot` para reiniciar el servidor ahora
+`systemctl poweroff` para apagar el servidor ahora
+
+### runlevels
+Es la manera en la que se arrancaba un sistema, se derivada de 6 nivels actualmente los puedes ver en `/etc/rc<nivel>d` en estas carpeta se organizaban de tal manera que en cada nivel habia que matar o arrancar ciertos servicios.
+
+El formato de los nombre consistia de una letra 2 digitos y el nombre
+Letra podia ser K para matar el servico y S para arrancar el sistema el numero era la prioridad.
+
+### Systemd
+Es como un arbol de servicio donde un servicio puede depender de un servicio y si ese servio muere tambine muere sus hijos.
+
+Con `systemctl list-dependencies <servicio>` muestra las dependencias del servio al que se haga la consulta.
+
+Con `syustemctl` salen todos los servicios y su estado
+
+Si quiero ver info de un servicio puede verlo con `systemctl show apache2` muestra todo sobre ese servicio.
+
+tambien con `systemctl status apache2` ves el estado del servicio.
+
+### Variables de entorno
+Son variables que se guardan en nuestro usuario, la manera mas facil de agregar una variable de entorno es `VARIBLE_NAME="CONTENIDO DE LA VARIABLE"` de esta manera solo se tendra esa variable por lo que dure la session y si quiere entrar a esa variable debe de ser de esta manera `echo $VARIABLE_NAME`, para guardar una variable de entorno se puede hacer desde el archivo `~/.profile` o `~/.bashrc` esto seria para un usuario en concreto. Si desea crear una variable de entorno para todos los usuarios puede ser esitado el archivo `/etc/bash.bashrc` y poner `export VARIABLE="/home/th3cod3"`
+
+### Manejo de usuarios y permisos
+Para crear un usuario se usa el comando `adduser <nombre_usuario>` en si este es un script que ejecuta diferentes comandos, `useradd` que es el comando que en si crea usuarios, y tambien crea un grupo, el directorio home, contraseña y informacion del usuario.
+
+En `/etc/passwd` estan todos los usuarios del sistema con su identificador, home y bash y en el archivo `/etc/shadow` se almacenan todas las contraseñas encryptadas.
+
+En Linux es muy importante los grupos, los usuarios que tiene ese grupo puede acceder a ese archivo. Si quieres ver a que grupos esta vinculado su usuario lo puedes hacer con el comando `groups [usuario]`. Para agregarle un grupo a un usuario es de la siguiente manera `addgroup <usuario> <grupo>` es necesario volver a logearse para que refresque los grupos nuevos. En `/etc/group` se guardan toso los grupos con id.
+
+### Configuraciones del kernel
+En el archivo `/etc/security/limits.conf` se encuentra la configuración de límites del kernel
+
+!!!! TEMA A PROFUNDISAR !!!!!
+
+###Permisos
+Cuando se hacer un `ls -l` se puede ver todos los archivos y sus permisos, owner y grupo que son muy importantes ya que a base de esto se puede manipular el archivo.
+
+`x xxx xxx xxx user group` el primer caracter representa el tipo del archivo, despues de eso se divide entre 3 caracters que son a quien va dirigido esos permisos, se divide de la siguiente manera `owner group others` y cada grupo se divide con 3 permisos `execute read write`, 
+Para cambiar permisos usa el `chmod [permisos] <archivo>`
+
+Se puede dar permisos con numeros enteros que representan un numero binario a la suma de permisos `execute = 4`, `write = 2` y `read = 1`binario con el mismo orden `111 = 7 | 001 = 1 | 010 = 3`
+
+
+hay diferente formas de dar permisos, hay que tener en cuenta que si se le quiere dar permiso a el owner con `u`, grupo con `g` y otros con `o` seguido de un simbolo que puede ser `-` para quitar el permiso, `+` para agregar permisos y `=` para restaurar los permisos,  
+Ejemplo `chmod o+x archivo.sh` agrega la opcion para que other pueda ejecutar este archivo.
+
+Para cambiar el dueño del archivo se usa `chown <usuario[:]> archivo` si se agrega adelante del usuario el doble punto esto tambien cambiara el grupo. 
+
+### Configuracion de red
+
+!!!! TEMA A PROFUNDISAR !!!!!
+
+### Firewall
+Hay que tener en cuenta que el firewall trabaja en cascada, es dcecir que si tengo una regla arriba que bloquea todas las conexiones y despues una regl;a que permite una conexion. esta no funcionara ya que el firewall funciona como una cascada.
+
+`iptable -L` ver la tabla de INPUT, FORWARD, OUTPUT
+`iptable -L -t nat` ver la  tabla de la nat que tiene la tabla de PREROUTING, INPUT, OUTPUT, POSTROUTING.
+`iptable  `
+
+
+## Edit file
+I would use the following approach in the Dockerfile:
+`echo "Some line to add to a file" >> /etc/sysctl.conf`
+
+That should do the trick. If you wish to replace some characters or similar you can work this out with sed by using e.g. the following:
+`sed -i "s|some-original-string|the-new-string |g" /etc/sysctl.conf`
