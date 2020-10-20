@@ -1,13 +1,39 @@
+- [Data binding](#data-binding)
+- [Condicionales](#condicionales)
+- [Loops](#loops)
+- [Eventos](#eventos)
+- [Cambiar estilos](#cambiar-estilos)
+- [Datos computadas y watchers](#datos-computadas-y-watchers)
+- [Two way data binding](#two-way-data-binding)
+- [Componentes](#componentes)
+  - [Propiedades](#propiedades)
+- [Slots](#slots)
+- [Ciclo de Vida y Hooks](#ciclo-de-vida-y-hooks)
+- [Vue CLI](#vue-cli)
+- [Estructura basica de un archivo .vue](#estructura-basica-de-un-archivo-vue)
+- [Comandos CLI de la aplicacion](#comandos-cli-de-la-aplicacion)
+- [Agregar una dependencia a nuestro proyecto](#agregar-una-dependencia-a-nuestro-proyecto)
+- [Usar componentes dentro de componentes](#usar-componentes-dentro-de-componentes)
+- [Vue Router](#vue-router)
+- [Fetch y API de Coincap](#fetch-y-api-de-coincap)
+- [Filtros de vue](#filtros-de-vue)
+- [Rutas dinamicas (con variables)](#rutas-dinamicas-con-variables)
+- [Navegacion](#navegacion)
+- [Componentes de terceros](#componentes-de-terceros)
+- [Problem de Reactividad](#problem-de-reactividad)
+- [Router cambio de runta dinamica](#router-cambio-de-runta-dinamica)
+- [Testing con jest](#testing-con-jest)
+
 ## Data binding
 ~~~javascript
 let app = new Vue({
-	el: "#querySelector",
-	data(){
-		return {
-			title: "hello!!!",
-			src: "http://facebook.com"
-		}
-	}
+  el: "#querySelector",
+  data(){
+    return {
+      title: "hello!!!",
+      src: "http://facebook.com"
+    }
+  }
 });
 ~~~
 
@@ -34,9 +60,9 @@ También es posible hacer loops de un array.
 
 ~~~html
 <table>
-	<tr v-for="person in persons">
-		<td>{{ person.name }}</td>
-	</tr>
+  <tr v-for="person in persons">
+    <td>{{ person.name }}</td>
+  </tr>
 </table>
 ~~~
 
@@ -46,25 +72,25 @@ Para ejecutar eventos se usa la directiva `v-on:<eventTrigger>` veamoslo en un e
 **HTML**
 ~~~html
 <div id="querySelector">
-	<button v-on:click="toggleView">{{ showText ? "hide" : "show" }}</button>
-	<p v-show=showText>I'm here!</p>
+  <button v-on:click="toggleView">{{ showText ? "hide" : "show" }}</button>
+  <p v-show=showText>I'm here!</p>
 </div>
 ~~~
 
 **JS**
 ~~~javascript
 let app = new Vue({
-	el: "#querySelector",
-	data(){
-		return {
-			showText: false
-		}
-	},
-	methods: {
-		toggleView: function () {
-			showText = !showText;
-		}
-	}
+  el: "#querySelector",
+  data(){
+    return {
+      showText: false
+    }
+  },
+  methods: {
+    toggleView: function () {
+      showText = !showText;
+    }
+  }
 });
 ~~~
 
@@ -74,22 +100,22 @@ Veamos unos ejemplos de como poner estilos a un elementos ya sea por medio de cl
 **CSS**
 ~~~css
 .blue{
-	color: blue
+  color: blue
 }
 .red{
-	color: red
+  color: red
 }
 .green{
-	color: green
+  color: green
 }
 ~~~
 
 **HTML**
 ~~~html
 <ul v-bind:style="{ background-color: '#' + color }">
-	<li v-for="price in prices">
-		<span v-bind:class="{blue: var === price, red: var > price, green: var < price}"></span>
-	</li>
+  <li v-for="price in prices">
+    <span v-bind:class="{blue: var === price, red: var > price, green: var < price}"></span>
+  </li>
 </ul>
 ~~~
 
@@ -98,23 +124,23 @@ Los datos computados o `computed` es un objeto de funciones con datos que pueden
 **JS**
 ~~~javascript
 let app = new Vue({
-	el: "#querySelector",
-	data(){
-		return {
-			showText: false,
-			firstName: "yefri",
-			lastName: "gonzalez"
-		}
-	},
-	computed: {
-		fullName: function () {
-			if(this.showText){
-				return `${this.firstName.toUpperCase()} ${this.lastName.toUpperCase()}`
-			}else{
-				return "Anonymous"
-			}
-		}
-	}
+  el: "#querySelector",
+  data(){
+    return {
+      showText: false,
+      firstName: "yefri",
+      lastName: "gonzalez"
+    }
+  },
+  computed: {
+    fullName: function () {
+      if(this.showText){
+        return `${this.firstName.toUpperCase()} ${this.lastName.toUpperCase()}`
+      }else{
+        return "Anonymous"
+      }
+    }
+  }
 });
 ~~~
 
@@ -122,19 +148,19 @@ Los watchers son un caso similar, pero en vez de retornar un valor, ejecutan una
 **JS**
 ~~~javascript
 let app = new Vue({
-	el: "#querySelector",
-	data(){
-		return {
-			showText: false,
-			firstName: "yefri",
-			lastName: "gonzalez"
-		}
-	},
-	watch: {
-		firstName: function (newVal, oldVal) {
-			alert(`You changed your name from ${oldVal} to ${newVal}`);
-		}
-	}
+  el: "#querySelector",
+  data(){
+    return {
+      showText: false,
+      firstName: "yefri",
+      lastName: "gonzalez"
+    }
+  },
+  watch: {
+    firstName: function (newVal, oldVal) {
+      alert(`You changed your name from ${oldVal} to ${newVal}`);
+    }
+  }
 });
 ~~~
 
@@ -151,39 +177,39 @@ Un componente es una seccion del codigo que puede ser reusado y consta con las m
 **HTML**
 ~~~html
 <div id="querySelector">
-	<h1>{{ title }}</h1>
-	<counter></counter>
+  <h1>{{ title }}</h1>
+  <counter></counter>
 </div>
 ~~~
 
 **JS**
 ~~~javascript
 Vue.component("counter", {
-	data(){
-		return {
-			count: 0,
-		}
-	},
-	methods: {
-		count: function(){
-			this.count++;
-		}
-	},
-	template: `
-		<div>
-			<button v-on:click="count">Click Here!</button>
-			<span>{{ count }}</span>
-		</div>
-	`
+  data(){
+    return {
+      count: 0,
+    }
+  },
+  methods: {
+    count: function(){
+      this.count++;
+    }
+  },
+  template: `
+    <div>
+      <button v-on:click="count">Click Here!</button>
+      <span>{{ count }}</span>
+    </div>
+  `
 });
 
 let app = new Vue({
-	el: "#querySelector",
-	data(){
-		return {
-			title: "Counter"
-		}
-	}
+  el: "#querySelector",
+  data(){
+    return {
+      title: "Counter"
+    }
+  }
 });
 ~~~
 
@@ -193,77 +219,77 @@ Por medio de `props` se pueden pasar valores, pero estos valores no pueden ser m
 **HTML**
 ~~~html
 <div id="querySelector">
-	<h1 v-bind:style="{background-color: '#' + color}">{{ title }}</h1>
-	<div v-for="coin in coins">
-		<coin-detail v-bind:coin="coin" v-on:change-color="function"></coin-detail>
-	</div>
+  <h1 v-bind:style="{background-color: '#' + color}">{{ title }}</h1>
+  <div v-for="coin in coins">
+    <coin-detail v-bind:coin="coin" v-on:change-color="function"></coin-detail>
+  </div>
 </div>
 ~~~
 
 **JS**
 ~~~javascript
 Vue.component("coinDetail", {
-	props: ["coin"],
-	data(){
-		return {
-			count: 0,
-			showPrices: false
-		}
-	},
-	methods: {
-		count: function(){
-			this.count++;
-		},
-		toggleShowPrices: function () {
-			this.showPrices = !this.showPrices
-			this.emit("changeColor", "0F0F0F");
-		}
-	},
-	computed: {
-		title: function (){
-			return `${this.coin.name} - ${this.coin.symbol}`
-		}
-	},
-	template: `
-		<div>
-			<h5>{{ title }}</h5>
-			<button v-on:click="toggleShowPrices">{{ showPrices ? "Hide" : "Show"}}</button>
-			<ul v-for="priceDay in coin.prices" v-show="showPrices">
-				<li>{{ priceDay.day }}: {{ priceDay.value }}</li>
-			</ul>
-		</div>
-	`
+  props: ["coin"],
+  data(){
+    return {
+      count: 0,
+      showPrices: false
+    }
+  },
+  methods: {
+    count: function(){
+      this.count++;
+    },
+    toggleShowPrices: function () {
+      this.showPrices = !this.showPrices
+      this.emit("changeColor", "0F0F0F");
+    }
+  },
+  computed: {
+    title: function (){
+      return `${this.coin.name} - ${this.coin.symbol}`
+    }
+  },
+  template: `
+    <div>
+      <h5>{{ title }}</h5>
+      <button v-on:click="toggleShowPrices">{{ showPrices ? "Hide" : "Show"}}</button>
+      <ul v-for="priceDay in coin.prices" v-show="showPrices">
+        <li>{{ priceDay.day }}: {{ priceDay.value }}</li>
+      </ul>
+    </div>
+  `
 });
 
 let app = new Vue({
-	el: "#querySelector",
-	data(){
-		return {
-			title: "Coin Detail",
-			color: "FFFFFF"
-			coins: [
-				{
-					name: "Bitcoin",
-					symbol: "BTC",
-					prices: [
-						{day: "Lunes", value: 8400},
-						{day: "Martes", value: 8300},
-						{day: "Miércoles", value: 8500},
-						{day: "Jueves", value: 8450},
-						{day: "Viernes", value: 8100},
-						{day: "Sábado", value: 8200},
-						{day: "Domingo", value: 8000},
-					],
-					price: 8400,
-				}
-			]
-		}
-	},
-	methods: {
-		updateColor: function (color) {
-			this.color = color
-		}
-	}
+  el: "#querySelector",
+  data(){
+    return {
+      title: "Coin Detail",
+      color: "FFFFFF"
+      coins: [
+        {
+          name: "Bitcoin",
+          symbol: "BTC",
+          prices: [
+            {day: "Lunes", value: 8400},
+            {day: "Martes", value: 8300},
+            {day: "Miércoles", value: 8500},
+            {day: "Jueves", value: 8450},
+            {day: "Viernes", value: 8100},
+            {day: "Sábado", value: 8200},
+            {day: "Domingo", value: 8000},
+          ],
+          price: 8400,
+        }
+      ]
+    }
+  },
+  methods: {
+    updateColor: function (color) {
+      this.color = color
+    }
+  }
 });
 ~~~
 
@@ -274,18 +300,18 @@ Los slots son etiquetas donde se le podrá insertar contenido HTML a un componen
 **HTML**
 ~~~html
 <div id="querySelector">
-	<h1 v-bind:style="{background-color: '#' + color}">{{ title }}</h1>
-	<child-comp-one v-bind:coin="coin">
-		<p>HTML que se va injectar en el componente</p>
-	</child-comp-one>
-	<child-comp-two v-bind:coin="coin">
-		<template v-slot:text>
-			<p>HTML que se va injectar en el componente</p>
-		</template>
-		<template v-slot:link>
-			<a href="#">Click aquí</p>
-		</template>
-	</child-comp-two>
+  <h1 v-bind:style="{background-color: '#' + color}">{{ title }}</h1>
+  <child-comp-one v-bind:coin="coin">
+    <p>HTML que se va injectar en el componente</p>
+  </child-comp-one>
+  <child-comp-two v-bind:coin="coin">
+    <template v-slot:text>
+      <p>HTML que se va injectar en el componente</p>
+    </template>
+    <template v-slot:link>
+      <a href="#">Click aquí</p>
+    </template>
+  </child-comp-two>
 </div>
 ~~~
 
@@ -293,54 +319,54 @@ Los slots son etiquetas donde se le podrá insertar contenido HTML a un componen
 **JS**
 ~~~javascript
 Vue.component("childCompOne", {
-	props: ["coin"],
-	data(){
-		return {
-		}
-	}
-	computed: {
-		title: function (){
-			return `${this.coin.name} - ${this.coin.symbol}`
-		}
-	},
-	template: `
-		<div>
-			<h5>{{ title }}</h5>
-			<slot></slot>
-		</div>
-	`
+  props: ["coin"],
+  data(){
+    return {
+    }
+  }
+  computed: {
+    title: function (){
+      return `${this.coin.name} - ${this.coin.symbol}`
+    }
+  },
+  template: `
+    <div>
+      <h5>{{ title }}</h5>
+      <slot></slot>
+    </div>
+  `
 });
 
 Vue.component("childCompTwo", {
-	props: ["coin"],
-	data(){
-		return {
-		}
-	}
-	computed: {
-		title: function (){
-			return `${this.coin.name} - ${this.coin.symbol}`
-		}
-	},
-	template: `
-		<div>
-			<h5>{{ title }}</h5>
-			<slot name="text"></slot>
-			<slot name="link"></slot>
-		</div>
-	`
+  props: ["coin"],
+  data(){
+    return {
+    }
+  }
+  computed: {
+    title: function (){
+      return `${this.coin.name} - ${this.coin.symbol}`
+    }
+  },
+  template: `
+    <div>
+      <h5>{{ title }}</h5>
+      <slot name="text"></slot>
+      <slot name="link"></slot>
+    </div>
+  `
 });
 
 let app = new Vue({
-	el: "#app",
-	data(){
-		return {
-			coin: {
-				name: "Bitcoin",
-				symbol: "BTC"
-			}
-		}
-	}
+  el: "#app",
+  data(){
+    return {
+      coin: {
+        name: "Bitcoin",
+        symbol: "BTC"
+      }
+    }
+  }
 });
 ~~~
 
@@ -364,21 +390,21 @@ Los nombres son muy claros, estos se usan de la siguiente manera.
 **JS**
 ~~~javascript
 let app = new Vue({
-	el: "#app",
-	data(){
-		return {
-			coin: {
-				name: "Bitcoin",
-				symbol: "BTC"
-			}
-		}
-	},
-	created() {
-		console.log('created...');
-	}
-	mounted() {
-		console.log('created...');
-	}
+  el: "#app",
+  data(){
+    return {
+      coin: {
+        name: "Bitcoin",
+        symbol: "BTC"
+      }
+    }
+  },
+  created() {
+    console.log('created...');
+  }
+  mounted() {
+    console.log('created...');
+  }
 });
 ~~~
 
@@ -391,9 +417,9 @@ Ahora se crea la carpeta con el nombre de la aplicación con los archivos básic
 node_modules/ # here come all the dependencies
 public/ # 
 src/
->	assets/
->	components/
->	main.js
+>  assets/
+>  components/
+>  main.js
 <configuration_files>
 .gitignore
 babel.config.js
@@ -406,23 +432,23 @@ package-lock.json
 **App.vue**
 ~~~vue
 <template>
-	<div id="app">
-		<p>{{ greeting }} World!</p>
-	</div>
+  <div id="app">
+    <p>{{ greeting }} World!</p>
+  </div>
 </template>
 
 <script>
 module.export = {
-	data: () => ({
-		greeting: 'Hello'
-	})
+  data: () => ({
+    greeting: 'Hello'
+  })
 }
 </script>
 
 <style scoped>
 p {
-	font-size: 2em;
-	text-align: center;
+  font-size: 2em;
+  text-align: center;
 }
 </style>
 ~~~
@@ -459,30 +485,30 @@ La manera de usar componentes dentro de otro componente es de la siguiente maner
 parent.vue
 ~~~vue
 <template>
-	<form>
-		<child />
-	</form>
+  <form>
+    <child />
+  </form>
 </template>
 <script>
-	import child from "@/component/customInput.vue";
+  import child from "@/component/customInput.vue";
 
-	export default {
-		name: "parent",
-		componets: { child }
-	}
+  export default {
+    name: "parent",
+    componets: { child }
+  }
 </script>
 ~~~
 
 child.vue
 ~~~vue
 <template>
-	<input type="text" >
+  <input type="text" >
 </template>
 <script>
 
-	export default {
-		name: "child"
-	}
+  export default {
+    name: "child"
+  }
 </script>
 ~~~
 
@@ -556,13 +582,13 @@ Primero que todo vamos a a crear un archivo separado para todas las llamadas de 
 const url = 'https://api.coincap.io/v2';
 
 function getAssets() {
-	return fetch(`${url}/assets?limit=20`)
-		.then(response => response.json())
-		.then(response => response.data);
+  return fetch(`${url}/assets?limit=20`)
+    .then(response => response.json())
+    .then(response => response.data);
 }
 
 export default {
-	getAssets
+  getAssets
 };
 ~~~
 
@@ -571,7 +597,7 @@ Ahora cuando quieras hacer uso de la api lo importa y usas sus funciones como un
 import api from '@/api'
 
 api.getAssets()
-	.then(data => { data })
+  .then(data => { data })
 ~~~
 
 ## Filtros de vue
@@ -606,15 +632,15 @@ para importar la funcion/filtro lo hacemos de la siguiente manera, `import { dol
 **main.js**
 ~~~javascript
 // ...
-	import { dollarFilter, percentFilter } from '@/filters'
-	Vue.filter('dollar', dollarFilter);
-	Vue.filter('percent', percentFilter);
+  import { dollarFilter, percentFilter } from '@/filters'
+  Vue.filter('dollar', dollarFilter);
+  Vue.filter('percent', percentFilter);
 // ...
 ~~~
 
 dentro de vue se usa con un pipe `|` por ejemplo `{{ a.marketCapUsd | dollar }}`
 
-## Rutas dinamicas
+## Rutas dinamicas (con variables)
 Bueno en este caso es muy similar la manera de agregar la ruta, con diferencia que en el path vamos a usar una varible con el carater `:` (doble puntos)
 
 
@@ -625,17 +651,17 @@ import CoinDetail from '@/components/CoinDetail'
 Vue.use(Router)
 
 export default new Router({
-	mode: "history",
+  mode: "history",
 
-	routes: [
-		// ...
-		{
-			path: "/coin/:id",
-			name: "coin-detail",
-			component: CoinDetail
-		},
-		// ...
-	]
+  routes: [
+    // ...
+    {
+      path: "/coin/:id",
+      name: "coin-detail",
+      component: CoinDetail
+    },
+    // ...
+  ]
 })
 ~~~
 
@@ -663,12 +689,12 @@ Vue.use(VueSpinners)
 Vue.use(Chartkick.use(Chart)) // en este caso chartkick es un wrapper de la libreria chart.js
 
 new Vue({
-	render: h => h(App)
+  render: h => h(App)
 }).$mount('#app')
 ~~~
 
 ## Problem de Reactividad
-Dentro de vue tenes un problema cuando se crea un componente y un array o objeto no tiene un elemento el no hace tracking de los datos que son concatenados para eso Vue no da una herramienta para agregarlo al sistema de reactividad con  `this.$set(objectOfArray, 'param', insertValue)`
+Dentro de vue tenes un problema cuando se crea un componente y un array o objeto no tiene un elemento el no hace tracking de los datos que son concatenados para eso Vue no da una herramienta para agregarlo al sistema de reactividad con `this.$set(objectOfArray, 'param', insertValue)`
 
 ## Router cambio de runta dinamica
 Dentro de Vue vemos que cuando queremos cambiar de una ruta dinamica no nos carga nada, veamoslo en un ejemplo.
@@ -676,10 +702,54 @@ Dentro de Vue vemos que cuando queremos cambiar de una ruta dinamica no nos carg
 
 ~~~javascript
 {
-	path: "/coin/:id",
-	name: "coin-detail",
-	component: CoinDetail
+  path: "/coin/:id",
+  name: "coin-detail",
+  component: CoinDetail
 }
 ~~~
 
 ahora si dentro de la ruta `/coin/bitcoin` queremos cambiar a `/coin/ethereum` esto no va hacer niun cambio ya que el componente solo recive sus parametros cuando es creado para eso devemos crea un watcher a `$route` para cuando el cambie se actualice el data.
+
+## Testing con jest
+Para el testing vamos a usar la libreria JEST la cual se puedo agergar con con `vue add @vue/unit-jest` el cual instalara jest y creara una carpeta `tests/unit/` dentro de ella vamos a crear los test. Veamos un ejemplo simple.
+
+test/unit/example.spec.js
+```javascript
+// mount es un wrapper del DOM
+import { mount } from "@vue/test-utils";
+// Es un componente
+import App from "@/App.vue";
+// archivo de js de ejemplo
+import { huevo, espinaca } from "./jestTest";
+
+// describe es una funcion de jest donde podemos dar una descripcion y al mismo tiempo hacer pruebas dentro de un callback
+// hasta donde tengo entendido es para detallar a la hora de correr el test
+describe("Se va a probar la calidad de los ingredientes", () => {
+  // dentro de test es casi lo mismo que describe pero mas detallo lo que vas a testear.
+  test("Calidad del huevo", () => {
+    // este es el tester en si donde expect() espera algo para evaluar
+    // depues le concatenas una funcion a la promesa con la tarea hacer
+    expect(huevo().estado[0]).toBe("fresco");
+  });
+
+  test("Calidad de la espinaca", () => {
+    expect(espinaca()).toEqual({
+      estado: 1,
+      color: "verde"
+    });
+  });
+});
+
+const wrapper = mount(App);
+
+describe("Probar que se cambió la propiedad changeTest ", () => {
+  test("should click a button", () => {
+    const lastValue = wrapper.vm.changeTest;
+
+    wrapper.find("button").trigger("click");
+
+    expect(wrapper.vm.changeTest).toBe(lastValue + 1);
+  });
+});
+
+```

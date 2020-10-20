@@ -1,102 +1,174 @@
 # TERMINAL
 
-## Extra (Navegación)
- * `~` #directorio home.
- * `/` #directorio root.
- * `..` #directorio padre.
- * `.` #directorio actual.
- * `\` #caracteres especiales (ej. `cd "mis fotos"` sino `cd mis\ fotos`).
+table of content
+- [TERMINAL](#terminal)
+  - [Shortcuts rutas (Navegación)](#shortcuts-rutas-navegación)
+  - [Comandos](#comandos)
+    - [man (Manual)](#man-manual)
+    - [pwc](#pwc)
+    - [cd (Change Directory)](#cd-change-directory)
+    - [ls (List)](#ls-list)
+    - [mkdir (Make Directory)](#mkdir-make-directory)
+    - [touch](#touch)
+    - [mv (Move)](#mv-move)
+    - [rm (Remove)](#rm-remove)
+    - [cp (Copy)](#cp-copy)
+    - [pushd](#pushd)
+    - [popd](#popd)
+    - [tail](#tail)
+    - [more](#more)
+    - [cat](#cat)
+    - [alias](#alias)
+    - [top](#top)
+    - [kill](#kill)
+    - [grep](#grep)
+    - [wc (Word Counter)](#wc-word-counter)
+    - [time](#time)
+    - [date](#date)
+    - [find](#find)
+    - [awk](#awk)
+  - [Shortcuts](#shortcuts)
+  - [Streams](#streams)
+    - [Standard Input](#standard-input)
+    - [Standard Output](#standard-output)
+    - [Standard Error](#standard-error)
+    - [Extra Streams](#extra-streams)
+  - [Descargas](#descargas)
+  - [Compresión de archivos](#compresión-de-archivos)
+    - [zip](#zip)
+    - [unzip](#unzip)
+    - [tar](#tar)
+  - [Crontab](#crontab)
+    - [Orden](#orden)
+    - [Formas de introducir datos](#formas-de-introducir-datos)
+    - [Ejemplos:](#ejemplos)
+
+## Shortcuts rutas (Navegación)
+* `~` #directorio home.
+* `/` #directorio root.
+* `..` #directorio padre.
+* `.` #directorio actual.
+* `\` #caracteres especiales (ej. `cd "mis fotos"` sino `cd mis\ fotos`).
 
 ## Comandos
 
-`man [cmd]`  #muestra el manual de el comando.
- * <kbd>space</kbd> #siguiente página.
- * <kbd>enter</kbd> #siguiente línea.
- * <kbd>b</kbd> #retrocede una página.
- 
+### man (Manual)
+`man [cmd]` #muestra el manual de el comando.
+* <kbd>space</kbd> #siguiente página.
+* <kbd>enter</kbd> #siguiente línea.
+* <kbd>b</kbd> #retrocede una página.
+
+### pwc
 `pwc` #muestra el directorio actual.
 
+### cd (Change Directory)
 `cd [directorio]` #te lleva al directorio.
 
+### ls (List)
 `ls [options] [file|dir]` #muestra una lista de archivos/carpetas que hay en el directorio.
-**Banderas ls**
- * `-a` #muestra todos los archivos/carpetas, hasta las escondidas.
- * `-d` #lista los directorios.
- * `-l` #muestra los permisos.
- * `-lh` #legible por humanos (cambia el peso en potencias MB, GB, etc).
- * `-R` #lista recursivamente (muestra los subdirectorios).
- * `-X` #hace un sort por extensión.
- * `-t` #hace un sort por tiempo.
- * `-S` #hace un sort por peso.
 
+**Banderas**
+* `-a` #muestra todos los archivos/carpetas, hasta las escondidas.
+* `-d` #lista los directorios.
+* `-l` #muestra los permisos.
+* `-lh` #legible por humanos (cambia el peso en potencias MB, GB, etc).
+* `-R` #lista recursivamente (muestra los subdirectorios).
+* `-X` #hace un sort por extensión.
+* `-t` #hace un sort por tiempo.
+* `-S` #hace un sort por peso.
+
+### mkdir (Make Directory)
 `mkdir <nombre del directorio>` #crea una carpeta.
 
+### touch
 `touch <nombre archivo>` #crea un archivo vacío o si existe cambia la fecha de edición.
 
+### mv (Move)
 `mv <archivo> <destino/[nombre a guardar]>` #mueve o renombrar un archivo.
 
+### rm (Remove)
 `rm [option] <archivo>` #elimina un archivo o carpeta.
-**Banderas rm**
- * `-r` | `-R` #elimina recursivamente (elimina los subdirectorios y su contenido).
- * `-f` #elimina forzoso sin preguntar si está seguro.
- * `-i` #pregunta antes de eliminar cualquier cosa.
 
+**Banderas rm**
+* `-r` | `-R` #elimina recursivamente (elimina los subdirectorios y su contenido).
+* `-f` #elimina forzoso sin preguntar si está seguro.
+* `-i` #pregunta antes de eliminar cualquier cosa.
+
+### cp (Copy)
 `cp <archivo> <destino/[nombre a guardar]>` #copia el archivo en el destino deseado.
 
+### pushd
 `pushd` #agrega un directorio a la pila.
 
+### popd
 `popd` #vuelve al directorio de la pila.
 
+### tail
 `tail [option] [file]` #muestra las últimas líneas de un archivo.
  Banderas tail
- * `-<numero>` #muestra la cantidad de líneas deseadas.
- * `-f` #muestra las últimas líneas y actualiza cada vez que haya un cambio.
+* `-<numero>` #muestra la cantidad de líneas deseadas.
+* `-f` #muestra las últimas líneas y actualiza cada vez que haya un cambio.
 
+### more
 `more [file]` #imprime en pantalla el contenido del archivo, con paginación.
 **Teclas more**
- * <kbd>space</kbd> #siguiente página.
- * <kbd>enter</kbd> #siguiente línea.
- * <kbd>b</kbd> #retrocede una página.
- * <kbd>q</kbd> #sale del archivo
+* <kbd>space</kbd> #siguiente página.
+* <kbd>enter</kbd> #siguiente línea.
+* <kbd>b</kbd> #retrocede una página.
+* <kbd>q</kbd> #sale del archivo
 
+### cat
 `cat [option] <file>` #imprime en pantalla el contenido del archivo, sin paginación.
 
+### alias
 `alias <aliasname=’comando’>` #crea un atajo para un comando.
 
+### top
 `top` #muestra los procesos.
 
+### kill
 `kill [option] <PID>` #mata el proceso con el PID enviado.
 
+### grep
 `grep [option] <patrón> [file]` #Busca patrones dentro de los archivos, si invoca atrás de un pipe | lo busca en el resultado del comando que viene su tras.
+
 **Ejemplo grep:**
 `grep -r . -e .php` #este comando me devuelve todos las líneas que contienen .php desde la carpeta raíz hacia abajo.
+
 **Banderas grep**
- * `-r` #recursivamente.
- * `-e` #patrón den regexp.
- * `-n` #numero de la línea que encontró el patrón.
-  * `-v` #Excluye el string
+* `-r` #recursivamente.
+* `-e` #patrón den regexp.
+* `-n` #numero de la línea que encontró el patrón.
+* `-v` #Excluye el string
 
+### wc (Word Counter)
 `wc [option] [file]` #cuenta cantidad de líneas, palabras, espacios entre otros.
-**Banderas wc**
- * `-l` #cuenta cantidad de líneas.
- * `-w` #cuenta cantidad de palabras
- * `-c` #cuenta cantidad de bytes
- * `-m` #cuenta cantidad de letras
 
+**Banderas wc**
+* `-l` #cuenta cantidad de líneas.
+* `-w` #cuenta cantidad de palabras
+* `-c` #cuenta cantidad de bytes
+* `-m` #cuenta cantidad de letras
+
+### time
 `time [comando]` #Me da el tiempo del proceso.
 
+### date
 `date` #Devuelve la fecha y hora de la que fue llamado el comando.
 
+### find
 `find [directorio][option]` #busca en los meta datos recursivamente.
-**Banderas find**
- * `-name <patrón>` #busca en el nombre del archivo y file
- * `-type <f|d>` #filtro para archivos `f` o carpetas `d`
 
- `awk  [option] 'program' <file>`
+**Banderas find**
+* `-name <patrón>` #busca en el nombre del archivo y file
+* `-type <f|d>` #filtro para archivos `f` o carpetas `d`
+
+### awk
+`awk [option] 'program' <file>` Es un comando para seleccionar información estructurad ya sea un csv y puedes darle instrucciones para que traiga la primer columna.
 
 ## Shortcuts
- * <kbd>CTRL</kbd> + <kbd>L</kbd> = Limpia pantalla.
- * <kbd>CTRL</kbd> + <kbd>R</kbd> = Busca un comando ejecutado.
+* <kbd>CTRL</kbd> + <kbd>L</kbd> = Limpia pantalla.
+* <kbd>CTRL</kbd> + <kbd>R</kbd> = Busca un comando ejecutado.
 
 ## Streams
 
@@ -110,44 +182,53 @@ Las respuestas del input sin errores con la cual se puede concatenar o recibir p
 En este caso es similar al <b>STD_OUT</b> con diferencia que en este es necesario llamarlo con el número `2` `<comando/programa> 2> <nombre archivo>` y `<comando/programa> 2>> <nombre archivo>`.
 
 ### Extra Streams
- * `2>&1` #<b>STD_ERROR</b> se envía al pointer de 1.
- * `;` #concateno procesos.
+* `2>&1` #<b>STD_ERROR</b> se envía al pointer de 1.
+* `;` #concateno procesos.
+* `&&` #concateno procesos.
+
 ## Descargas
 `curl [option] <url>`
- ## Compresión de archivos
 
- `zip [nombre.zip] [files|path]`
- **Ejemplo zip:**
+## Compresión de archivos
+
+### zip
+`zip [nombre.zip] [files|path]`
+
+**Ejemplo zip:**
 `zip archivoscsv.zip *csv` #Este comando comprime todos los archivos que terminen con la palabra csv.
 
+### unzip
 `unzip [option] <file>[.zip]` #Descomprime el archivo.
-**Banderas unzip** 
- * `-v` #Muestra todos los archivos dentro, sin descomprimir.
 
- `tar [option] [file]` #agrupa archivos juntos y también puede comprimir y descomprimir.
- **Ejemplo tar:**
- `tar cfz csv.tar.gz *csv` #Agrupa todos los archivos que terminan en csv y lo guarda como `csv.tar.gz`, y los guarda en un `.tar.gz`.
- **Banderas tar**
-  * `cfz` #"create file zip" Crea un archivo con compresión zip.
-  * `xfz` #"extract file zip" descomprime un archivo con compresión zip.
+**Banderas unzip** 
+* `-v` #Muestra todos los archivos dentro, sin descomprimir.
+
+### tar
+`tar [option] [file]` #agrupa archivos juntos y también puede comprimir y descomprimir.
+**Ejemplo tar:**
+`tar cfz csv.tar.gz *csv` #Agrupa todos los archivos que terminan en csv y lo guarda como `csv.tar.gz`, y los guarda en un `.tar.gz`.
+**Banderas tar**
+* `cfz` #"create file zip" Crea un archivo con compresión zip.
+* `xfz` #"extract file zip" descomprime un archivo con compresión zip.
 
 ## Crontab
+
 ### Orden
- * Minutó `[0-59]`
- * Hora `[0-23]`
- * Dia del mes `[1-31]`
- * Mes `[1-12]`
- * Dia de la semana `[1-12]`
- * comando a ejecutar `[comando]`
+* Minutó `[0-59]`
+* Hora `[0-23]`
+* Dia del mes `[1-31]`
+* Mes `[1-12]`
+* Dia de la semana `[1-12]`
+* comando a ejecutar `[comando]`
 
 ### Formas de introducir datos
- * `[n]` > `[3]` #Numero exacto.
- * `[n1,n2,n2]` > `[1,15,30]` #Lista de números.
- * `[*/n]` > `[*/5]` #Cualquier número divisible por 5.
- * `[n1-n2]` > `[1-10]` #Todos los números desde 1 al 10.
- * `[*]` > `[*]` #Todos los números.
+* `[n]` > `[3]` #Numero exacto.
+* `[n1,n2,n2]` > `[1,15,30]` #Lista de números.
+* `[*/n]` > `[*/5]` #Cualquier número divisible por 5.
+* `[n1-n2]` > `[1-10]` #Todos los números desde 1 al 10.
+* `[*]` > `[*]` #Todos los números.
 
 **Nota:** Los números en cada columna tienen sus limites que puede ser apreciados en Orden.
- 
- ### Ejemplos:
- `*	*	*	*	*	php ~/files/script.php >> ~/result.txt 2>&1` #Ejecuta el script cada minuto y concatena el <b>STD_OUT</b> y el <b>STD_ERROR</b> en el archivo `resultado.txt`
+
+### Ejemplos:
+`*	*	*	*	*	php ~/files/script.php >> ~/result.txt 2>&1` #Ejecuta el script cada minuto y concatena el <b>STD_OUT</b> y el <b>STD_ERROR</b> en el archivo `resultado.txt`

@@ -1,13 +1,50 @@
 The general job control commands in Linux are:
-
- * `jobs` - list the current jobs
- * `fg` - resume the job that's next in the queue
- * `fg %[number]` - resume job [number]
- * `bg` - Push the next job in the queue into the background
- * `bg %[number]` - Push the job [number] into the background
- * `kill %[number]` - Kill the job numbered [number]
- * `kill -[signal] %[number]` - Send the signal [signal] to job number [number]
- * `disown %[number]` - disown the process(no more terminal will be owner), so command will be alive even after closing the terminal.
+- [vim](#vim)
+- [Introducion linea de comando](#introducion-linea-de-comando)
+  - [Manejadores de paquetes (APT)](#manejadores-de-paquetes-apt)
+  - [DNS](#dns)
+    - [Comando dig](#comando-dig)
+    - [Tipos de Subdominio](#tipos-de-subdominio)
+  - [Sistema de archivos](#sistema-de-archivos)
+  - [Usuarios](#usuarios)
+  - [SSH](#ssh)
+  - [SCP](#scp)
+  - [Repositorios/Paquetes](#repositoriospaquetes)
+    - [Paquetes recomendados](#paquetes-recomendados)
+  - [Compresión y empaquetamiento de archivos](#compresión-y-empaquetamiento-de-archivos)
+    - [zip](#zip)
+    - [tar](#tar)
+    - [gzip](#gzip)
+  - [Navegar por internet](#navegar-por-internet)
+  - [Firewall](#firewall)
+  - [Administrar disco y particiones](#administrar-disco-y-particiones)
+    - [Particiones](#particiones)
+    - [Formatear una partición](#formatear-una-partición)
+      - [Sistemas de archivos](#sistemas-de-archivos)
+      - [formatear una particion](#formatear-una-particion)
+      - [Montar una particion manual](#montar-una-particion-manual)
+      - [Montar particion automáticamente con /etc/fstab](#montar-particion-automáticamente-con-etcfstab)
+    - [Partición SWAP](#partición-swap)
+      - [Como crear una particion SWAP](#como-crear-una-particion-swap)
+    - [Generar imágenes de disco](#generar-imágenes-de-disco)
+    - [LVM](#lvm)
+      - [Physical Volume (Union de discos)](#physical-volume-union-de-discos)
+      - [Volume Group (Discos|volumenes)](#volume-group-discosvolumenes)
+      - [Logic Volume (Particiones)](#logic-volume-particiones)
+    - [Arranque del sistema](#arranque-del-sistema)
+      - [MBR:](#mbr)
+      - [UEFI:](#uefi)
+      - [GRUB](#grub)
+  - [System](#system)
+    - [Apagar un servidor](#apagar-un-servidor)
+    - [runlevels](#runlevels)
+    - [Systemd](#systemd)
+    - [Variables de entorno](#variables-de-entorno)
+    - [Manejo de usuarios y permisos](#manejo-de-usuarios-y-permisos)
+    - [Configuraciones del kernel](#configuraciones-del-kernel)
+    - [Configuracion de red](#configuracion-de-red)
+    - [Firewall](#firewall-1)
+  - [Edit file](#edit-file)
 
 **ADD env. varible**
 ` export PATH="$PATH: $HOME/.composer/vendor/bin"`
@@ -42,24 +79,24 @@ Si un usuario hace una consulta a th3cod3.com y tiene el TTL en 500, después de
 Permite hacer consultas a DNS de cualquier dominio
 
 `dig th3cod3.com`
- * Ver dirección asociadas a un dominio
+* Ver dirección asociadas a un dominio
 
 `dig th3cod3.com NS`
- * Ver quien esta administrando el dominio
+* Ver quien esta administrando el dominio
 
 `dig th3cod3.com MX`
- * Ver registro MX configurado
+* Ver registro MX configurado
 
 `dig th3cod3.com MX @DNS`
- * Ver registro A en un otro dns
+* Ver registro A en un otro dns
 
 ### Tipos de Subdominio
 
- * **A:** Apunta a una dirección IP, debe ser una dirección valida a nivel mundial, puede ser privada o pública
- * **CNAME:** Alias a cualquier otro dominio que se encuentre en Internet
- * **MX:** Permite saber hacia donde va ir el trafico del correo
- * **TXT:** Permite configurar texto plano que soporte los dominos, es comúnmente usado para evitar el spam en los correos
- * **AAA:** Usado para IPv6
+* **A:** Apunta a una dirección IP, debe ser una dirección valida a nivel mundial, puede ser privada o pública
+* **CNAME:** Alias a cualquier otro dominio que se encuentre en Internet
+* **MX:** Permite saber hacia donde va ir el trafico del correo
+* **TXT:** Permite configurar texto plano que soporte los dominos, es comúnmente usado para evitar el spam en los correos
+* **AAA:** Usado para IPv6
 
  ## Sistema de archivos
 
@@ -67,12 +104,12 @@ Permite hacer consultas a DNS de cualquier dominio
 `/bin` Comandos **`cli`** *"Command Line Interface"*, para todos los usuario.
 `/boot` arranque inicio sistema
 `/dev` Dispositivos como: disco duro, teclado, mouse, etc. 
- * [Explicaciones acerca de /dev](http://gulix.cl/wiki/Explicaciones_acerca_de_/dev)
- * `/dev/zero` ceros (Se puede hacer formateo de disco llenándolo de ceros)
- * `dev/null`tuberías
+* [Explicaciones acerca de /dev](http://gulix.cl/wiki/Explicaciones_acerca_de_/dev)
+* `/dev/zero` ceros (Se puede hacer formateo de disco llenándolo de ceros)
+* `dev/null`tuberías
 
 `/etc` configuraciones del sistema
- * `/etc/passwd` Donde están todos los usuarios del sistema.
+* `/etc/passwd` Donde están todos los usuarios del sistema.
 
 `/home` Donde se guardan todos los usuarios y sus archivos tambien accesible por `~`
 `/lib, lib32, lib64` librerías
@@ -90,140 +127,146 @@ Permite hacer consultas a DNS de cualquier dominio
 ## Usuarios
 
 `sudo su - [usuario]` 
- * Ingresar como root si no ingresa el usuario, el guion es para cargar un **ENV** *(Environment)* nuevo.
+* Ingresar como root si no ingresa el usuario, el guion es para cargar un **ENV** *(Environment)* nuevo.
 
 `adduser <nombre_usuario>`
- * Crea un usuario.
+* Crea un usuario.
 
 `logout`, `exit` o <kbd>ctrl</kbd> + <kbd>d</kbd>
- * permiten salir de la sesión de la consola por la que se ingresó.
+* permiten salir de la sesión de la consola por la que se ingresó.
 
 `deluser <nombre_usuario>`
- * Elimina usuario, no archivos del usuario
+* Elimina usuario, no archivos del usuario
 
 `fdisk -l`
- * Como está configurado el sistema de archivos del disco
+* Como está configurado el sistema de archivos del disco
 
 `less /etc/passwd`
- * Como root permite conocer los usuarios que id tienen asignados y otra info adicional
+* Como root permite conocer los usuarios que id tienen asignados y otra info adicional
 
 `passwd <nombre_usuario>`
- * El root puede forzar la contraseña.
+* El root puede forzar la contraseña.
 
 ## SSH
 
 `ssh <usuario>@<ip> -i <llave_ssh>`
- * Crea una conexión SSH con el servidor SHH 
+* Crea una conexión SSH con el servidor SHH 
 
 ## SCP
 `scp -i <llave_ssh> <archivo> <usuario>@<ip>:[save_location]`
- * Enviá un archivo a el servidor por medio de SFTP
+* Enviá un archivo a el servidor por medio de SFTP
 `scp -i <llave_ssh> <usuario>@<ip>:<archivo> <save_location>`
- * Descargar un archivo del servidor por medio de SFTP
+* Descargar un archivo del servidor por medio de SFTP
 ## Repositorios/Paquetes
 
 `apt-get update`
- * Carga la lista de paquetes que esta en los repositorios que tienes en el archivo `/etc/apt/sources.list`
+* Carga la lista de paquetes que esta en los repositorios que tienes en el archivo `/etc/apt/sources.list`
 
 `apt-get upgrade`
- * Actualiza todos los paquetes que están instalados.
+* Actualiza todos los paquetes que están instalados.
 
 `apt-cache search <búsqueda>`
- * Busca en las listas de paquetes que tengo.
+* Busca en las listas de paquetes que tengo.
 
 `apt-get install <paquete[ paquete ...]>`
- * Busca en las listas de paquetes que tengo.
+* Busca en las listas de paquetes que tengo.
 
 ### Paquetes recomendados
- * `htop` es un upgrade del paquete top, para monitorear el sistema (procesos).
-	* Muestra la cantidad de uso de cada core.
-	* La cantidad de RAM y uso.
-	* La cantidad de SWAP (*Es la cantidad de memoria en disco para cuando se llena la RAM*) y uso.
-	* La cantidad de tareas que se estan ejecutando
-	* La carga. (Hay tres numero para ver la cantidad de procesos que se estan ejecutando. El primero es por 1 minuto, el segundo por 5 minutos y el tercero el por 15 minutos)
-	* Uptime el tiempo que lleva el equipo encendido
- * `screen` *emulador de terminal con sesiones*
-	* `screen -S <nombre_ventana>` Crea una venta con el nombre.
-	* `screen -r [nombre_ventana|PID]` Entra a una ventana.
-	* `screen -ls` Muestra las ventanas disponibles.
-	* `screen -d -m <comando>` crea una ventana en segundo plano y la cierra cuando termine de ejecutar el comando/ejecución.
+* `htop` es un upgrade del paquete top, para monitorear el sistema (procesos).
+* Muestra la cantidad de uso de cada core.
+* La cantidad de RAM y uso.
+* La cantidad de SWAP (*Es la cantidad de memoria en disco para cuando se llena la RAM*) y uso.
+* La cantidad de tareas que se estan ejecutando
+* La carga. (Hay tres numero para ver la cantidad de procesos que se estan ejecutando. El primero es por 1 minuto, el segundo por 5 minutos y el tercero el por 15 minutos)
+* Uptime el tiempo que lleva el equipo encendido
+* `screen` *emulador de terminal con sesiones*
+* `screen -S <nombre_ventana>` Crea una venta con el nombre.
+* `screen -r [nombre_ventana|PID]` Entra a una ventana.
+* `screen -ls` Muestra las ventanas disponibles.
+* `screen -d -m <comando>` crea una ventana en segundo plano y la cierra cuando termine de ejecutar el comando/ejecución.
 **Los shortcuts solo funcionan cuando estas en un screen.**
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>c</kbd> crea una ventana nueva.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>p</kbd> Muestra la ventana anterior.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>`<number>`</kbd> Salta a la venta con ese numero.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>n</kbd> Muestra la siguiente ventana.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>k</kbd> Elimina la ventana actual.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>\\</kbd> Elimina todas las ventanas.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>"</kbd> Para cambiar de venta pero en forma de lista. muestra una lista de las ventanas y sus nombre para seleccionar.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>A</kbd> Cambia el nombre de la ventana.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>|</kbd> Divide la pantalla verticalmente.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>S</kbd> Divide la pantalla horizontal.
-	* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>TAB</kbd> Cambia de division.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>c</kbd> crea una ventana nueva.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>p</kbd> Muestra la ventana anterior.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>`<number>`</kbd> Salta a la venta con ese numero.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>n</kbd> Muestra la siguiente ventana.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>k</kbd> Elimina la ventana actual.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>\\</kbd> Elimina todas las ventanas.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>"</kbd> Para cambiar de venta pero en forma de lista. muestra una lista de las ventanas y sus nombre para seleccionar.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>A</kbd> Cambia el nombre de la ventana.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>|</kbd> Divide la pantalla verticalmente.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>S</kbd> Divide la pantalla horizontal.
+* <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>TAB</kbd> Cambia de division.
 
 
 ## Compresión y empaquetamiento de archivos
 
 Deferencia entre empaquetar y comprimir son:
- * **Empaquetar** es reunir archivos y ponerlos juntos.
- * **Comprimir** es codificar estos archivos para que baje su peso.
+* **Empaquetar** es reunir archivos y ponerlos juntos.
+* **Comprimir** es codificar estos archivos para que baje su peso.
 
- `zip [nombre.zip] [files|path]`
+### zip
+`zip [nombre.zip] [files|path]`
 
- **Ejemplo zip:**
+**Ejemplo zip:**
 
 `zip archivoscsv.zip *csvEste comando comprime todos los archivos que terminen con la palabra csv.
 
 `unzip [option] <file>[.zip]` # Descomprime un archivo .zip
 **Banderas unzip** 
- * `-v` # Muestra todos los archivos dentro, sin descomprimir.
+* `-v` # Muestra todos los archivos dentro, sin descomprimir.
 
- `tar [option] [file]` #agrupa archivos juntos y también puede comprimir y descomprimir.
+### tar
+`tar [option] [file]` #agrupa archivos juntos y también puede comprimir y descomprimir.
 
- **Ejemplo tar:**
+**Ejemplo tar:**
 
- `tar cfz csv.tar.gz *csv` # Agrupa todos los archivos que terminan en csv y lo guarda como `csv.tar.gz`, y los guarda en un `.tar.gz`.
+`tar cfz csv.tar.gz *csv` # Agrupa todos los archivos que terminan en csv y lo guarda como `csv.tar.gz`, y los guarda en un `.tar.gz`.
 
- **Banderas tar**
-  * `cfz` #"create file zip" Crea un archivo con compresión zip extension `.gz`.
-  * `xfz` #"extract file zip" descomprime un archivo con compresión zip.
-`gzip -d <file>` # Descomprime un .gz
+**Banderas tar**
+* `cfz` #"create file zip" Crea un archivo con compresión zip extension `.gz`.
+* `xfz` #"extract file zip" descomprime un archivo con compresión zip.
+
+### gzip
+`gzip -d <file>` # Descomprime un `.gz`
+`gzip <file>` # comprime un `.gz`
 
 ## Navegar por internet
- * `wget` para descargar contenido de internet
- * `w3m` para hacer consultas HTTP (No soporta JS)
+* `wget` para descargar contenido de internet
+* `curl` para hacer consultas HTTP.
+* `w3m` Para navegar por internet y interpretar el resultado (es como un browser, pero no soporta JS)
 
 
 ## Firewall
 [Tutorial DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-16-04)
 `sudo ufw default deny incoming`
- * Denegar todas las peticiones que entren
+* Denegar todas las peticiones que entren
 
 `sudo ufw default allow outgoing`
- * Permitir todas las peticiones de salida
+* Permitir todas las peticiones de salida
 
 `sudo ufw allow ssh`
- * Permitir conexiones ssh
+* Permitir conexiones ssh
 `sudo ufw allow 22`
- * Permitir conexiones por el puerto 22 (ssh)
+* Permitir conexiones por el puerto 22 (ssh)
 
 `sudo ufw enable`
 `sudo ufw disable`
- * Activar/desactivar el firewall
+* Activar/desactivar el firewall
 
 `sudo ufw allow 6000:6007/tcp`
 `sudo ufw allow 6000:6007/udp`
- * Permitir un rango de puertos y con un protocolo especifico 
+* Permitir un rango de puertos y con un protocolo especifico 
 
 `sudo ufw allow from 15.15.15.51`
 `sudo ufw allow from 15.15.15.51 to any port 22`
- * Permitir conexiones a un ip o a un rango en especifico o a un puerto en especifico
+* Permitir conexiones a un ip o a un rango en especifico o a un puerto en especifico
 
 
 `sudo ufw status numbered`
- * Ver estado del firewall y permisos
+* Ver estado del firewall y permisos
 
 `sudo ufw reset`
- * elimina toda la configuración del firewall
+* elimina toda la configuración del firewall
 
 ## Administrar disco y particiones
 Un disco duro se puede ver como una torta donde se puede dividir en diferentes sectores.
@@ -276,8 +319,8 @@ https://wiki.archlinux.org/index.php/Fstab_(Espa%C3%B1ol)
 se tiene que editar el archivo `/etc/fstab` con el siguiente orden separado por espacio o tab
 
 ~~~Shell
-# <partition>	<file_location>	<type>	<options>	<dump>	<pass>
-/dev/xvdf1	/etc/xvdf1	ext4	default,discard 0	0
+#/ <partition>  <file_location>  <type>  <options>  <dump>  <pass>
+/dev/xvdf1  /etc/xvdf1  ext4  default,discard 0  0
 ~~~
 
 ### Partición SWAP
@@ -296,8 +339,8 @@ hay que crear una particion con id 82 que es Linux Swap y con file system.
 * Montar la Swap automáticamente
   * Hay que editar el fstab `vim /etc/fstab`
 ~~~Shell
-# <ID>	<type>	<options>	<dump>	<pass>
-UUID=<ID>	swap	sw	0	0
+#/ <ID>  <type>  <options>  <dump>  <pass>
+UUID=<ID>  swap  sw  0  0
 ~~~
 
 ### Generar imágenes de disco
@@ -343,15 +386,15 @@ vg: es un grupo de discos a los que se crean como una particion
 para agrgar una particion/disco al areglo de lvm usamos el comando `pvcreate <particion|disco>` ejemplo `pvcreate /dev/xvdf1`. Si decea eliminar una particion es `pvremove <particion|disco>` ejemplo `pvremove /dev/xvdf` para ver todos los pv montados se usa `pvs` o con `pvdisplay` se ve mucho mas detallado.
 
 #### Volume Group (Discos|volumenes)
-*	Ahora creamos grupos a lvm usamos `vgcreate <nombre> <particion>` ejemplo `vgcreate databases /dev/xvdf1` es bueno practica poner nombre distintivos 
-*	Si quieres agregar mas disco a ese grupo se hace con `vgextend <nombre> <particion>` ejemplo `vgextend databases /dev/xvdf2`. 
+*  Ahora creamos grupos a lvm usamos `vgcreate <nombre> <particion>` ejemplo `vgcreate databases /dev/xvdf1` es bueno practica poner nombre distintivos 
+*  Si quieres agregar mas disco a ese grupo se hace con `vgextend <nombre> <particion>` ejemplo `vgextend databases /dev/xvdf2`. 
 * Para quitar una particion|disco se usa `vgreduce <particon|disco>` 
-*	para ver los grupos `vgs` o con `vgdisplay` se ve mucho mas detallado.
+*  para ver los grupos `vgs` o con `vgdisplay` se ve mucho mas detallado.
 
 #### Logic Volume (Particiones)
-*	Creamos el volumen de la siguiente manera `lvcreate -n <name> -L <length> <volume_group>` ejemplo `lvcreate -n postgres -L 10g databases`. 
-*	Esto ya se comportara como una particion a la cual se tiene que formatear y montar después de ser creada. 
-*	Si desea agregar mas espacio a una particion `lvextend -L+<length> <logical_volumen>` ejemplo `lvextend -L+10G /dev/databases/postgres` **NOTA:** Hay que modificar el file system, ext4 permite extender en caliente. Se hace de la siguiente manera `resize2fs <particion>`.
+*  Creamos el volumen de la siguiente manera `lvcreate -n <name> -L <length> <volume_group>` ejemplo `lvcreate -n postgres -L 10g databases`. 
+*  Esto ya se comportara como una particion a la cual se tiene que formatear y montar después de ser creada. 
+*  Si desea agregar mas espacio a una particion `lvextend -L+<length> <logical_volumen>` ejemplo `lvextend -L+10G /dev/databases/postgres` **NOTA:** Hay que modificar el file system, ext4 permite extender en caliente. Se hace de la siguiente manera `resize2fs <particion>`.
 * Para acceder a esa particion es `/dev/databases/postgres` 
 * Para ver los volumenes `lvs` o con `lvdisplay` se ve mucho mas detallado.
 
@@ -367,10 +410,13 @@ El grub se encunetra en `/etc/grub.d/` y en `/boot/grub/grub.cfg` es el archivo 
 
 El GRUB se pone en el MBR, en el disco primario. Si deseas hacer una copia del MBR se puede hacer con `dd` de la siguiente manera `dd if=/dev/xvda of=/root/mbr_backup bs=512 count=1`
 
+## System
+
 ### Apagar un servidor
+
 **TIPS:**
-*	Es bueno verificar que servidor es el que va apagar
-*	Tener en cuneta que Linux no pregunta si lo quiere apagar. Solamente apaga!
+* Es bueno verificar que servidor es el que va apagar
+* Tener en cuneta que Linux no pregunta si lo quiere apagar. Solamente apaga!
 
 `shutdown -r now` para reiniciar el servidor ahora
 `shutdown now` para apagar el servidor ahora
