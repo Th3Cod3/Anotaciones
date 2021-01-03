@@ -1,0 +1,19 @@
+html
+head
+title
+body
+p
+h1-h6
+img
+    width
+    height
+    src
+hr
+pre
+br
+a
+    href
+    target
+*
+    style
+    id

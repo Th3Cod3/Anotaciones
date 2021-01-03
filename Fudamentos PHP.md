@@ -175,7 +175,8 @@ echo $$app; // output: Platzi
   * array_merge_recursive() // group by key
   * array_combine()
 * foreach
-* 
+* include, include_once
+* require, require_once
 
 ## Extracion de datos
 ~~~php
@@ -555,3 +556,47 @@ La S se trata de una clase que debe tener sólo una razón para cambiar.
 * Para contener la propagación del cambio, debemos separar las responsabilidades.
 * Si una clase asume más de una responsabilidad, será más sensible al cambio.
 * Si una clase asume más de una responsabilidad, las responsabilidades se acoplan.
+
+
+
+
+
+# PHP OOP
+## Deuda tecnica.
+La deuda técnica es el coste y los intereses a pagar por hacer mal las cosas. El sobre esfuerzo a pagar para mantener un producto software mal hecho, y lo que conlleva, como el coste de la mala imagen frente a los clientes, etc
+
+## Code smell
+Hace referencia al mal olor del código. Este concepto no se refiere a errores técnicos, sino a errores de orden y diseño. Esto sucede mucho cuando intentamos crear soluciones a partir de otras soluciones.
+La solución a estos casos es crear una abstracción.
+
+### Cómo evitarlo
+Para esto debemos hacer una programación más limpia, y reusable. Tenemos que evitar crear grandes métodos, o sea, programación estructura dentro de clases. También evitar crear grandes clases o superclases.
+
+Y sin duda, nosotros debemos evitar a toda costa copiar y pegar código.
+Recuerda: el sistema va a funcionar pero a futuro va a ser horrible de mantener, hasta imposible.
+
+## Código espagueti
+Un código espagueti es código que está estructurado mediante if, while, for netamente, todo en un mismo archivo donde solamente buscamos resolver el problema. Cuando creamos código estructurado corremos peligro de crear código espagueti. La OOP nos ayuda evitarlo.
+
+El dinero en esta profesión está en el mantenimiento del código.
+
+### Cómo evitar el código espagueti
+1. Resolver el problema
+1. Crea de forma lógica y coherente diferentes métodos que reemplacen tus estructuras de control.
+1. Crea una o varias clases dependiendo el caso.
+
+## OOP
+La programación orientada a objetos es una forma de programar, un paradigma o una técnica. Los conceptos que aquí aprendiste te servirán en PHP y en otros lenguajes de programación. Recordemos que para programar de esta forma en realidad debemos crear objetos, y un objeto es una instancia de una clase y una clase es el molde. Ejemplo:
+
+**Programación orientada a objetos:** es la técnica.
+**PHP:** es el lenguaje de programación (donde implementamos la técnica).
+Podemos resumir los diferentes conceptos de la siguiente manera:
+
+**Herencia:** compartir métodos entre clases padres y clases hijas.
+Abstracción: significa aislar, separar y sacar.
+
+**Polimorfismo:** capacidad o virtud que tienen los métodos donde, por ejemplo, un mismo método puede tener diferentes comportamientos y dar diferentes resultados.
+
+**Modularidad:** este principio básicamente nos ayuda a tener cada vez piezas de código más pequeñas y entendibles, donde cada pieza es un módulo y muchos módulos forman el sistema entero.
+
+**Encapsulamiento:** un objeto debe estar aislado y ser un módulo natural. Esto se cumple aplicando la protección a las propiedades impidiendo su modificación y básicamente se refiere a controlar el acceso.

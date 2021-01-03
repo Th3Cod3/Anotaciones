@@ -11,6 +11,9 @@ The general job control commands in Linux are:
   - [SCP](#scp)
   - [Repositorios/Paquetes](#repositoriospaquetes)
     - [Paquetes recomendados](#paquetes-recomendados)
+      - [htop](#htop)
+      - [screen](#screen)
+      - [tmux](#tmux)
   - [Compresión y empaquetamiento de archivos](#compresión-y-empaquetamiento-de-archivos)
     - [zip](#zip)
     - [tar](#tar)
@@ -172,6 +175,7 @@ Permite hacer consultas a DNS de cualquier dominio
 * Busca en las listas de paquetes que tengo.
 
 ### Paquetes recomendados
+#### htop
 * `htop` es un upgrade del paquete top, para monitorear el sistema (procesos).
 * Muestra la cantidad de uso de cada core.
 * La cantidad de RAM y uso.
@@ -179,6 +183,7 @@ Permite hacer consultas a DNS de cualquier dominio
 * La cantidad de tareas que se estan ejecutando
 * La carga. (Hay tres numero para ver la cantidad de procesos que se estan ejecutando. El primero es por 1 minuto, el segundo por 5 minutos y el tercero el por 15 minutos)
 * Uptime el tiempo que lleva el equipo encendido
+#### screen
 * `screen` *emulador de terminal con sesiones*
 * `screen -S <nombre_ventana>` Crea una venta con el nombre.
 * `screen -r [nombre_ventana|PID]` Entra a una ventana.
@@ -196,6 +201,20 @@ Permite hacer consultas a DNS de cualquier dominio
 * <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>|</kbd> Divide la pantalla verticalmente.
 * <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>S</kbd> Divide la pantalla horizontal.
 * <kbd>CTRL</kbd>+<kbd>a</kbd> <kbd>TAB</kbd> Cambia de division.
+#### tmux
+* `tmux` *emulador de terminal con sesiones*
+* `tmux new -s <session name>` crea una session con un nombre.
+* `tmux ls` Muestra todas la sesiones.
+* `tmux attach -t <session name>` Conecta a una session.
+* `tmux rename-session <current name> <new name>` nombra una session una session.
+* `tmux kill-session -t <current name>` Cierra una session.
+* <kbd>CTRL</kbd>+<kbd>b</kbd> <kbd>c</kbd> crea una ventana nueva, pero en segundo plano.
+* <kbd>CTRL</kbd>+<kbd>b</kbd> <kbd>`<number>`</kbd> Salta a la venta con ese numero.
+* <kbd>CTRL</kbd>+<kbd>b</kbd> <kbd>%</kbd> Divide la pantalla en vertical
+* <kbd>CTRL</kbd>+<kbd>b</kbd> <kbd>"</kbd> Divide la pantalla en horizontal
+* <kbd>CTRL</kbd>+<kbd>b</kbd> <kbd>ARROW</kbd> Cambia de pantalla hacia la dirección que allá oprimido
+* <kbd>CTRL</kbd>+<kbd>b</kbd> <kbd>,</kbd> renombrar la ventana
+* <kbd>CTRL</kbd>+<kbd>b</kbd> <kbd>d</kbd> Detach the la session y queda en segundo plano
 
 
 ## Compresión y empaquetamiento de archivos
@@ -487,3 +506,6 @@ I would use the following approach in the Dockerfile:
 
 That should do the trick. If you wish to replace some characters or similar you can work this out with sed by using e.g. the following:
 `sed -i "s|some-original-string|the-new-string |g" /etc/sysctl.conf`
+
+## Update wsl time
+`sudo hwclock --hctosys`
