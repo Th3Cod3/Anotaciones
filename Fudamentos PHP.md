@@ -557,10 +557,6 @@ La S se trata de una clase que debe tener sólo una razón para cambiar.
 * Si una clase asume más de una responsabilidad, será más sensible al cambio.
 * Si una clase asume más de una responsabilidad, las responsabilidades se acoplan.
 
-
-
-
-
 # PHP OOP
 ## Deuda tecnica.
 La deuda técnica es el coste y los intereses a pagar por hacer mal las cosas. El sobre esfuerzo a pagar para mantener un producto software mal hecho, y lo que conlleva, como el coste de la mala imagen frente a los clientes, etc
